@@ -1,0 +1,3728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculator Pro (.pro) - Free Online Financial, Health, Math &amp; Date Calculators</title>
+  <!-- Tailwind CSS v3.4.16 -->
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <!-- Chart.js v4.4.1 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy-header: #003366;
+      --brand-green: #66cc33;
+      --hero-bg: #e8eef5;
+      --lcd-bg: #2b547e;
+      --key-num: #d0dce8;
+      --key-fn: #f8fafc;
+      --key-op: #dfe9f3;
+      --search-btn: #2e5b88;
+      --cat-green: #006622;
+      --link-blue: #004488;
+      --panel-bg: #f4f7fb;
+      --panel-border: #c5d4e3;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: #1e293b;
+      background-color: #ffffff;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    code, pre, .font-mono {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* Classic Calculator.net inspired structural styling */
+    .top-header {
+      background-color: #003366;
+      color: #ffffff;
+      border-bottom: 3px solid #2e5b88;
+    }
+
+    .brand-pro {
+      color: #66cc33;
+    }
+
+    .hero-band {
+      background-color: #e8eef5;
+      border-bottom: 1px solid #c8d6e5;
+    }
+
+    /* 5x10 Scientific Calculator LCD & Keypad */
+    .sci-shell {
+      background: #ffffff;
+      border: 2px solid #8ba4be;
+      border-radius: 6px;
+      box-shadow: 0 3px 10px rgba(0, 51, 102, 0.12);
+      overflow: hidden;
+    }
+
+    .sci-lcd {
+      background-color: #2b547e;
+      color: #ffffff;
+      padding: 10px 14px;
+      border-bottom: 2px solid #1d3c5c;
+      text-align: right;
+      min-height: 78px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sci-grid {
+      display: grid;
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      gap: 4px;
+      padding: 8px;
+      background-color: #e3ebf3;
+    }
+
+    .sci-key {
+      height: 36px;
+      border-radius: 3px;
+      font-size: 12.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.1s ease;
+      padding: 0 2px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .sci-key:active,
+    .sci-key.kbd-pressed {
+      transform: translateY(1px);
+      outline: 2px solid #66cc33;
+      filter: brightness(0.93);
+    }
+    .sci-shell:focus-within,
+    .sci-shell:focus {
+      outline: 2px solid #2e5b88;
+      box-shadow: 0 0 0 3px rgba(46, 91, 136, 0.2);
+    }
+
+    .sci-key-fn {
+      background-color: #f8fafc;
+      color: #1e293b;
+      border: 1px solid #b6c6d6;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05);
+    }
+
+    .sci-key-fn:hover {
+      background-color: #eef4f9;
+      border-color: #7d97b2;
+    }
+
+    .sci-key-num {
+      background-color: #d0dce8;
+      color: #002b55;
+      border: 1px solid #9ab0c7;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,0.06);
+    }
+
+    .sci-key-num:hover {
+      background-color: #c1d1e1;
+      border-color: #6b88a6;
+    }
+
+    .sci-key-op {
+      background-color: #dfe9f3;
+      color: #003366;
+      border: 1px solid #9eb3c9;
+      font-weight: 700;
+    }
+
+    .sci-key-op:hover {
+      background-color: #cedee9;
+    }
+
+    .sci-key-clear {
+      background-color: #f8d7da;
+      color: #842029;
+      border: 1px solid #e4a3a9;
+      font-weight: 700;
+    }
+
+    .sci-key-clear:hover {
+      background-color: #f1c2c6;
+    }
+
+    .sci-key-eq {
+      background-color: #2e5b88;
+      color: #ffffff;
+      border: 1px solid #1d4063;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .sci-key-eq:hover {
+      background-color: #003366;
+    }
+
+    .sci-key-deg-rad {
+      grid-column: span 2 / span 2;
+      background-color: #f8fafc;
+      color: #003366;
+      border: 1px solid #b6c6d6;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* Classic Category Directory Links */
+    .cat-title {
+      color: #006622;
+      font-weight: 700;
+      font-size: 17px;
+    }
+
+    .calc-link {
+      color: #004488;
+      background: transparent;
+      border: none;
+      text-align: left;
+      text-decoration: none;
+      font-size: 14.5px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 0;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .calc-link:hover {
+      text-decoration: underline;
+      color: #002244;
+    }
+
+    .cat-icon-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 9999px;
+      background: linear-gradient(145deg, #f1f5f9, #dce4ee);
+      border: 2px solid #b8c4d0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #475569;
+      box-shadow: inset 0 1px 2px #ffffff, 0 2px 4px rgba(0,0,0,0.06);
+      flex-shrink: 0;
+    }
+
+    /* Ad Unit Containers */
+    .ad-slot-wrapper {
+      transition: all 0.2s ease;
+    }
+
+    .ad-hidden {
+      display: none !important;
+    }
+
+    .ad-unit-box {
+      background: repeating-linear-gradient(
+        -45deg,
+        #f8fafc,
+        #f8fafc 12px,
+        #f1f5f9 12px,
+        #f1f5f9 24px
+      );
+      border: 1px dashed #94a3b8;
+      border-radius: 4px;
+      color: #475569;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .ad-leaderboard {
+      width: 100%;
+      max-width: 728px;
+      min-height: 90px;
+      margin: 0 auto;
+      padding: 8px 16px;
+    }
+
+    .ad-skyscraper {
+      width: 300px;
+      max-width: 100%;
+      min-height: 600px;
+      padding: 16px;
+    }
+
+    .ad-incontent {
+      width: 100%;
+      max-width: 728px;
+      min-height: 90px;
+      margin: 0 auto;
+      padding: 10px 16px;
+    }
+
+    /* Classic Input Form Panel */
+    .calc-panel {
+      background-color: #e8eef5;
+      border: 1px solid #b8c9db;
+      border-radius: 4px;
+    }
+
+    .calc-panel-header {
+      background-color: #003366;
+      color: #ffffff;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 16px;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .calc-result-header {
+      background-color: #006622;
+      color: #ffffff;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 16px;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-calc-primary {
+      background-color: #4d9900;
+      color: #ffffff;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 3px;
+      border: 1px solid #3b7600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+    }
+
+    .btn-calc-primary:hover {
+      background-color: #3d7a00;
+    }
+
+    .btn-calc-secondary {
+      background-color: #64748b;
+      color: #ffffff;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 3px;
+      border: 1px solid #475569;
+      cursor: pointer;
+    }
+
+    .btn-calc-secondary:hover {
+      background-color: #475569;
+    }
+
+    .btn-search {
+      background-color: #2e5b88;
+      color: #ffffff;
+      font-weight: 700;
+      padding: 9px 20px;
+      border-radius: 3px;
+      border: 1px solid #1d3f63;
+      cursor: pointer;
+    }
+
+    .btn-search:hover {
+      background-color: #003366;
+    }
+
+    .calc-input {
+      width: 100%;
+      background-color: #ffffff;
+      border: 1px solid #94a3b8;
+      border-radius: 3px;
+      padding: 6px 10px;
+      font-size: 14px;
+      color: #0f172a;
+    }
+
+    .calc-input:focus {
+      outline: 2px solid #2e5b88;
+      border-color: #003366;
+    }
+
+    /* Responsive adjustments for 5x10 keypad on compact screens */
+    @media (max-width: 640px) {
+      .sci-grid {
+        gap: 2px;
+        padding: 4px;
+      }
+      .sci-key {
+        font-size: 10.5px;
+        height: 32px;
+      }
+      .sci-key-deg-rad {
+        font-size: 9.5px;
+        gap: 2px;
+      }
+    }
+  </style>
+</head>
+<body id="home" class="min-h-screen flex flex-col bg-white text-slate-800">
+
+  <!-- TOP HEADER (#003366) -->
+  <header class="top-header sticky top-0 z-40 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-4">
+        <button id="brand-home-btn" type="button" onclick="navigateTo('home')" class="text-left group focus:outline-none flex items-baseline gap-0.5" title="Return to Calculator Pro Home">
+          <span class="text-2xl sm:text-[26px] font-extrabold tracking-tight text-white">Calculator</span>
+          <span class="text-2xl sm:text-[26px] font-extrabold tracking-tight text-white ml-1.5">Pro</span>
+          <span class="text-lg sm:text-xl font-extrabold brand-pro">.pro</span>
+        </button>
+        <span class="hidden md:inline-block text-xs text-blue-200 border-l border-blue-800 pl-3 py-0.5">
+          100% Client-Side Financial, Health &amp; Math Suite
+        </span>
+      </div>
+
+      <!-- Utilities: Currency Switcher -->
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button id="nav-home-pill" type="button" onclick="navigateTo('home')" class="text-xs font-semibold bg-[#1d4b7a] hover:bg-[#2e5b88] text-white px-2.5 py-1.5 rounded border border-blue-400/30 transition">
+          All Calculators
+        </button>
+
+        <!-- Currency Switcher -->
+        <div class="flex items-center bg-[#002244] border border-blue-400/40 rounded px-2 py-1 text-xs">
+          <label for="currency-select" class="text-blue-200 font-medium mr-1.5">Currency:</label>
+          <select id="currency-select" onchange="handleCurrencyChange(this.value)" class="bg-transparent text-white font-bold focus:outline-none cursor-pointer pr-1">
+            <option value="USD" class="text-slate-900">USD ($)</option>
+            <option value="INR" class="text-slate-900">INR (₹)</option>
+            <option value="EUR" class="text-slate-900">EUR (€)</option>
+            <option value="GBP" class="text-slate-900">GBP (£)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1. TOP LEADERBOARD BANNER (728x90) -->
+  <section id="ad-top-leaderboard" class="ad-slot-wrapper bg-slate-50 border-b border-slate-200 py-2.5 px-4">
+    <div class="ad-unit-box ad-leaderboard">
+      <div class="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-slate-500">
+        <span class="px-1.5 py-0.5 bg-slate-200 text-slate-700 rounded font-semibold">Advertisement</span>
+        <span>IAB Leaderboard • 728 × 90 Responsive Container</span>
+      </div>
+      <div class="text-xs sm:text-sm font-semibold text-slate-700 mt-1">
+        Programmatic Top Leaderboard Slot (<code class="text-[11px] bg-white px-1 py-0.5 rounded border border-slate-300">#ad-top-leaderboard</code>) — High-Viewability Header Placement
+      </div>
+    </div>
+  </section>
+
+  <!-- HERO SECTION (Dual-Pane on Light Blue-Gray #e8eef5) -->
+  <section id="hero-section" class="hero-band py-5 px-4">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Left Pane: Full 5x10 Scientific Calculator -->
+      <div class="lg:col-span-7">
+        <div id="sci-calculator-shell" tabindex="0" class="sci-shell" aria-label="Scientific Calculator (Keyboard Enabled)">
+          <!-- Dark Slate-Blue LCD Screen (#2b547e) -->
+          <div class="sci-lcd">
+            <div class="flex items-center justify-between text-xs text-blue-100/90 font-mono">
+              <div class="flex items-center gap-2">
+                <span id="sci-mode-badge" class="px-1.5 py-0.5 rounded bg-blue-950/70 text-[11px] font-bold text-[#66cc33]">DEG</span>
+                <span id="sci-mem-badge" class="px-1.5 py-0.5 rounded bg-blue-950/50 text-[11px]">M: 0</span>
+                <span id="sci-ans-badge" class="hidden sm:inline text-[11px] text-blue-200">Ans: 0</span>
+                <span id="sci-kbd-badge" class="px-1.5 py-0.5 rounded bg-blue-950/60 text-[10px] text-emerald-300" title="Physical keyboard & Numpad enabled">⌨ Key Ready</span>
+              </div>
+              <div id="sci-expression" class="truncate max-w-[65%] text-right text-blue-100 text-xs">0</div>
+            </div>
+            <div id="sci-display" class="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white truncate mt-1">0</div>
+          </div>
+
+          <!-- 5 Rows x 10 Columns Keypad Matrix -->
+          <div class="sci-grid" role="group" aria-label="Scientific Calculator Keypad">
+            <!-- ROW 1: [sin] [cos] [tan] [(•) Deg ( ) Rad] [7] [8] [9] [+] [Back] -->
+            <button type="button" onclick="sciAction('sin')" class="sci-key sci-key-fn" title="Sine">sin</button>
+            <button type="button" onclick="sciAction('cos')" class="sci-key sci-key-fn" title="Cosine">cos</button>
+            <button type="button" onclick="sciAction('tan')" class="sci-key sci-key-fn" title="Tangent">tan</button>
+            <button type="button" id="sci-deg-rad-btn" onclick="sciToggleAngleMode()" class="sci-key sci-key-deg-rad" title="Switch between Degrees and Radians">
+              <span id="sci-deg-indicator" class="font-bold text-[#003366]">(•) Deg</span>
+              <span id="sci-rad-indicator" class="text-slate-500">( ) Rad</span>
+            </button>
+            <button type="button" onclick="sciDigit('7')" class="sci-key sci-key-num">7</button>
+            <button type="button" onclick="sciDigit('8')" class="sci-key sci-key-num">8</button>
+            <button type="button" onclick="sciDigit('9')" class="sci-key sci-key-num">9</button>
+            <button type="button" onclick="sciOperator('+')" class="sci-key sci-key-op">+</button>
+            <button type="button" onclick="sciAction('back')" class="sci-key sci-key-clear" title="Backspace">Back</button>
+
+            <!-- ROW 2: [sin⁻¹] [cos⁻¹] [tan⁻¹] [π] [e] [4] [5] [6] [-] [Ans] -->
+            <button type="button" onclick="sciAction('asin')" class="sci-key sci-key-fn" title="Inverse Sine">sin⁻¹</button>
+            <button type="button" onclick="sciAction('acos')" class="sci-key sci-key-fn" title="Inverse Cosine">cos⁻¹</button>
+            <button type="button" onclick="sciAction('atan')" class="sci-key sci-key-fn" title="Inverse Tangent">tan⁻¹</button>
+            <button type="button" onclick="sciConstant('pi')" class="sci-key sci-key-fn" title="Pi (3.14159265...)">π</button>
+            <button type="button" onclick="sciConstant('e')" class="sci-key sci-key-fn" title="Euler's Constant (2.7182818...)">e</button>
+            <button type="button" onclick="sciDigit('4')" class="sci-key sci-key-num">4</button>
+            <button type="button" onclick="sciDigit('5')" class="sci-key sci-key-num">5</button>
+            <button type="button" onclick="sciDigit('6')" class="sci-key sci-key-num">6</button>
+            <button type="button" onclick="sciOperator('-')" class="sci-key sci-key-op">−</button>
+            <button type="button" onclick="sciAction('ans')" class="sci-key sci-key-op" title="Last Answer">Ans</button>
+
+            <!-- ROW 3: [xʸ] [x³] [x²] [eˣ] [10ˣ] [1] [2] [3] [×] [M+] -->
+            <button type="button" onclick="sciOperator('^')" class="sci-key sci-key-fn" title="x raised to power y">xʸ</button>
+            <button type="button" onclick="sciAction('cube')" class="sci-key sci-key-fn" title="Cube (x³)">x³</button>
+            <button type="button" onclick="sciAction('square')" class="sci-key sci-key-fn" title="Square (x²)">x²</button>
+            <button type="button" onclick="sciAction('exp')" class="sci-key sci-key-fn" title="e raised to power x">eˣ</button>
+            <button type="button" onclick="sciAction('pow10')" class="sci-key sci-key-fn" title="10 raised to power x">10ˣ</button>
+            <button type="button" onclick="sciDigit('1')" class="sci-key sci-key-num">1</button>
+            <button type="button" onclick="sciDigit('2')" class="sci-key sci-key-num">2</button>
+            <button type="button" onclick="sciDigit('3')" class="sci-key sci-key-num">3</button>
+            <button type="button" onclick="sciOperator('*')" class="sci-key sci-key-op">×</button>
+            <button type="button" onclick="sciMemory('M+')" class="sci-key sci-key-op" title="Memory Add">M+</button>
+
+            <!-- ROW 4: [ʸ√x] [³√x] [√x] [ln] [log] [0] [.] [EXP] [/] [M-] -->
+            <button type="button" onclick="sciOperator('yroot')" class="sci-key sci-key-fn" title="y-th root of x">ʸ√x</button>
+            <button type="button" onclick="sciAction('cbrt')" class="sci-key sci-key-fn" title="Cube root of x">³√x</button>
+            <button type="button" onclick="sciAction('sqrt')" class="sci-key sci-key-fn" title="Square root of x">√x</button>
+            <button type="button" onclick="sciAction('ln')" class="sci-key sci-key-fn" title="Natural Logarithm">ln</button>
+            <button type="button" onclick="sciAction('log')" class="sci-key sci-key-fn" title="Base-10 Logarithm">log</button>
+            <button type="button" onclick="sciDigit('0')" class="sci-key sci-key-num">0</button>
+            <button type="button" onclick="sciDecimal()" class="sci-key sci-key-num">.</button>
+            <button type="button" onclick="sciAction('EXP')" class="sci-key sci-key-fn" title="Scientific Notation (*10^)">EXP</button>
+            <button type="button" onclick="sciOperator('/')" class="sci-key sci-key-op">/</button>
+            <button type="button" onclick="sciMemory('M-')" class="sci-key sci-key-op" title="Memory Subtract">M-</button>
+
+            <!-- ROW 5: [(] [)] [1/x] [%] [n!] [±] [RND] [AC] [=] [MR] -->
+            <button type="button" onclick="sciParen('(')" class="sci-key sci-key-fn">(</button>
+            <button type="button" onclick="sciParen(')')" class="sci-key sci-key-fn">)</button>
+            <button type="button" onclick="sciAction('inv')" class="sci-key sci-key-fn" title="Reciprocal (1/x)">1/x</button>
+            <button type="button" onclick="sciAction('percent')" class="sci-key sci-key-fn" title="Percentage">%</button>
+            <button type="button" onclick="sciAction('fact')" class="sci-key sci-key-fn" title="Factorial (n!)">n!</button>
+            <button type="button" onclick="sciAction('negate')" class="sci-key sci-key-num" title="Toggle Plus/Minus">±</button>
+            <button type="button" onclick="sciAction('rnd')" class="sci-key sci-key-fn" title="Random Number (0 to 1)">RND</button>
+            <button type="button" onclick="sciClear()" class="sci-key sci-key-clear" title="All Clear">AC</button>
+            <button type="button" onclick="sciEquals()" class="sci-key sci-key-eq" title="Calculate Result">=</button>
+            <button type="button" id="sci-mr-btn" onclick="sciMemory('MR')" class="sci-key sci-key-op" title="Memory Recall (click twice to clear memory)">MR</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Pane: Quick Search & Overview -->
+      <div class="lg:col-span-5 flex flex-col justify-between h-full">
+        <div class="bg-white/80 border border-[#c5d4e3] rounded-md p-5 shadow-sm">
+          <h1 class="text-[24px] font-bold text-[#003366] leading-tight mb-2">
+            Free Online Calculators
+          </h1>
+          <p class="text-sm text-slate-700 mb-4">
+            Fast, comprehensive, 100% client-side calculators for finance, mortgage amortization, health, mathematics, and chronological date analysis.
+          </p>
+
+          <!-- Search Bar -->
+          <div class="flex items-stretch gap-2 mb-3">
+            <input
+              id="directory-search-input"
+              type="text"
+              oninput="handleDirectorySearch(this.value)"
+              placeholder="Search calculators (e.g., Mortgage, BMI, Loan, Age)..."
+              class="calc-input flex-1 text-sm py-2 px-3"
+              aria-label="Search calculators"
+            />
+            <button id="directory-search-btn" type="button" onclick="triggerDirectorySearch()" class="btn-search text-sm">
+              Search
+            </button>
+          </div>
+
+          <!-- Live Search Match Feedback -->
+          <div id="search-feedback-box" class="hidden mb-3 p-2.5 bg-blue-50 border border-blue-200 rounded text-xs text-slate-700">
+            <div class="flex items-center justify-between mb-1.5">
+              <span id="search-count-label" class="font-bold text-[#003366]">Matching Calculators:</span>
+              <button type="button" onclick="clearDirectorySearch()" class="text-[#004488] hover:underline font-semibold">Reset Filter</button>
+            </div>
+            <div id="search-quick-chips" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- Popular Direct Launch Pills -->
+          <div class="pt-2 border-t border-slate-200">
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Featured Engines:</div>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="navigateTo('mortgage')" class="text-xs bg-[#e8eef5] hover:bg-[#d0dce8] text-[#004488] font-semibold px-2.5 py-1 rounded border border-[#b8c9db]">Mortgage &amp; Amortization</button>
+              <button type="button" onclick="navigateTo('loan')" class="text-xs bg-[#e8eef5] hover:bg-[#d0dce8] text-[#004488] font-semibold px-2.5 py-1 rounded border border-[#b8c9db]">Personal Loan</button>
+              <button type="button" onclick="navigateTo('compound')" class="text-xs bg-[#e8eef5] hover:bg-[#d0dce8] text-[#004488] font-semibold px-2.5 py-1 rounded border border-[#b8c9db]">Compound Interest</button>
+              <button type="button" onclick="navigateTo('autoloan')" class="text-xs bg-[#e8eef5] hover:bg-[#d0dce8] text-[#004488] font-semibold px-2.5 py-1 rounded border border-[#b8c9db]">Auto Loan</button>
+              <button type="button" onclick="navigateTo('bmi')" class="text-xs bg-[#e8eef5] hover:bg-[#d0dce8] text-[#004488] font-semibold px-2.5 py-1 rounded border border-[#b8c9db]">BMI Calculator</button>
+              <button type="button" onclick="navigateTo('calorie')" class="text-xs bg-[#e8eef5] hover:bg-[#d0dce8] text-[#004488] font-semibold px-2.5 py-1 rounded border border-[#b8c9db]">Calorie &amp; TDEE</button>
+              <button type="button" onclick="navigateTo('percentage')" class="text-xs bg-[#e8eef5] hover:bg-[#d0dce8] text-[#004488] font-semibold px-2.5 py-1 rounded border border-[#b8c9db]">Percentage</button>
+              <button type="button" onclick="navigateTo('age')" class="text-xs bg-[#e8eef5] hover:bg-[#d0dce8] text-[#004488] font-semibold px-2.5 py-1 rounded border border-[#b8c9db]">Exact Age &amp; Date</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MAIN WORKSPACE CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+
+    <!-- HOME VIEW: FOUR-COLUMN CATEGORY DIRECTORY -->
+    <div id="view-home">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-6">
+        <div>
+          <h2 class="text-lg font-bold text-[#003366]">Browse Calculators by Category</h2>
+          <p class="text-xs text-slate-600">Select any calculator below to launch its interactive solver, visual charts, and formula documentation.</p>
+        </div>
+        <span id="active-currency-indicator" class="text-xs font-semibold bg-emerald-50 text-[#006622] border border-emerald-200 px-2.5 py-1 rounded">
+          Active Currency: USD ($)
+        </span>
+      </div>
+
+      <!-- 4-Column Category Grid -->
+      <div id="directory-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+        
+        <!-- Column 1: Financial Calculators -->
+        <div class="directory-col bg-white border border-slate-200 rounded-md p-4 shadow-sm" data-category="Financial Calculators">
+          <div class="flex items-center gap-3.5 mb-3 pb-2.5 border-b border-slate-100">
+            <div class="cat-icon-circle" aria-hidden="true">
+              <svg class="w-7 h-7 text-slate-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v10m-2.5-7.5c0-1.1 1.1-2 2.5-2s2.5.9 2.5 2c0 2-5 1.8-5 4 0 1.1 1.1 2 2.5 2s2.5-.9 2.5-2"></path>
+              </svg>
+            </div>
+            <h3 class="cat-title">Financial Calculators</h3>
+          </div>
+          <ul class="space-y-1.5 pl-1" id="list-financial">
+            <li data-link-item="Mortgage Calculator amortization home price property tax">
+              <button type="button" data-nav="mortgage" onclick="navigateTo('mortgage')" class="calc-link">› Mortgage Calculator</button>
+            </li>
+            <li data-link-item="Loan Calculator personal loan monthly installment payoff">
+              <button type="button" data-nav="loan" onclick="navigateTo('loan')" class="calc-link">› Loan Calculator</button>
+            </li>
+            <li data-link-item="Auto Loan Calculator car vehicle trade-in sales tax">
+              <button type="button" data-nav="autoloan" onclick="navigateTo('autoloan')" class="calc-link">› Auto Loan Calculator</button>
+            </li>
+            <li data-link-item="Compound Interest Calculator investment return future value">
+              <button type="button" data-nav="compound" onclick="navigateTo('compound')" class="calc-link">› Compound Interest</button>
+            </li>
+            <li data-link-item="Amortization Calculator schedule mortgage principal interest csv">
+              <button type="button" data-nav="amortization" onclick="navigateTo('amortization')" class="calc-link">› Amortization Calculator</button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Column 2: Fitness & Health Calculators -->
+        <div class="directory-col bg-white border border-slate-200 rounded-md p-4 shadow-sm" data-category="Fitness & Health Calculators">
+          <div class="flex items-center gap-3.5 mb-3 pb-2.5 border-b border-slate-100">
+            <div class="cat-icon-circle" aria-hidden="true">
+              <svg class="w-7 h-7 text-slate-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </div>
+            <h3 class="cat-title">Fitness &amp; Health Calculators</h3>
+          </div>
+          <ul class="space-y-1.5 pl-1" id="list-health">
+            <li data-link-item="BMI Calculator body mass index weight WHO category">
+              <button type="button" data-nav="bmi" onclick="navigateTo('bmi')" class="calc-link">› BMI Calculator</button>
+            </li>
+            <li data-link-item="Calorie Calculator TDEE daily maintenance fat loss muscle gain">
+              <button type="button" data-nav="calorie" onclick="navigateTo('calorie')" class="calc-link">› Calorie Calculator</button>
+            </li>
+            <li data-link-item="Body Fat Calculator US Navy waist neck hip composition">
+              <button type="button" data-nav="bodyfat" onclick="navigateTo('bodyfat')" class="calc-link">› Body Fat Calculator</button>
+            </li>
+            <li data-link-item="BMR Calculator basal metabolic rate Mifflin-St Jeor">
+              <button type="button" data-nav="bmr" onclick="navigateTo('bmr')" class="calc-link">› BMR Calculator</button>
+            </li>
+            <li data-link-item="Ideal Weight Calculator Devine Robinson Miller healthy range">
+              <button type="button" data-nav="idealweight" onclick="navigateTo('idealweight')" class="calc-link">› Ideal Weight Calculator</button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Math Calculators -->
+        <div class="directory-col bg-white border border-slate-200 rounded-md p-4 shadow-sm" data-category="Math Calculators">
+          <div class="flex items-center gap-3.5 mb-3 pb-2.5 border-b border-slate-100">
+            <div class="cat-icon-circle" aria-hidden="true">
+              <svg class="w-7 h-7 text-slate-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m-6 4h6m-6 4h4M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z"></path>
+              </svg>
+            </div>
+            <h3 class="cat-title">Math Calculators</h3>
+          </div>
+          <ul class="space-y-1.5 pl-1" id="list-math">
+            <li data-link-item="Scientific Calculator trigonometry logarithms exponents factorial">
+              <button type="button" data-nav="scientific" onclick="navigateTo('scientific')" class="calc-link">› Scientific Calculator</button>
+            </li>
+            <li data-link-item="Percentage Calculator percent increase decrease ratio">
+              <button type="button" data-nav="percentage" onclick="navigateTo('percentage')" class="calc-link">› Percentage Calculator</button>
+            </li>
+            <li data-link-item="Fraction Calculator numerator denominator simplify mixed">
+              <button type="button" data-nav="fraction" onclick="navigateTo('fraction')" class="calc-link">› Fraction Calculator</button>
+            </li>
+            <li data-link-item="Random Number Generator RNG integer dice range">
+              <button type="button" data-nav="random" onclick="navigateTo('random')" class="calc-link">› Random Number Generator</button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Column 4: Other Calculators -->
+        <div class="directory-col bg-white border border-slate-200 rounded-md p-4 shadow-sm" data-category="Other Calculators">
+          <div class="flex items-center gap-3.5 mb-3 pb-2.5 border-b border-slate-100">
+            <div class="cat-icon-circle" aria-hidden="true">
+              <svg class="w-7 h-7 text-slate-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <h3 class="cat-title">Other Calculators</h3>
+          </div>
+          <ul class="space-y-1.5 pl-1" id="list-other">
+            <li data-link-item="Age Calculator chronological birthday days lived">
+              <button type="button" data-nav="age" onclick="navigateTo('age')" class="calc-link">› Age Calculator</button>
+            </li>
+            <li data-link-item="Date Calculator days between dates add subtract">
+              <button type="button" data-nav="date" onclick="navigateTo('date')" class="calc-link">› Date Calculator</button>
+            </li>
+            <li data-link-item="Time Calculator hours minutes seconds duration">
+              <button type="button" data-nav="time" onclick="navigateTo('time')" class="calc-link">› Time Calculator</button>
+            </li>
+            <li data-link-item="GPA Calculator grade point average college credits">
+              <button type="button" data-nav="gpa" onclick="navigateTo('gpa')" class="calc-link">› GPA Calculator</button>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ACTIVE CALCULATOR VIEW (Swaps smoothly with Directory) -->
+    <div id="view-calculator" class="hidden">
+      <!-- Breadcrumb & Back Bar -->
+      <nav aria-label="Breadcrumb" class="flex flex-wrap items-center justify-between gap-2 bg-[#f4f7fb] border border-[#c5d4e3] rounded px-3.5 py-2 mb-5 text-xs">
+        <div class="flex items-center gap-1.5 text-slate-600">
+          <button type="button" data-nav="home" onclick="navigateTo('home')" class="text-[#004488] hover:underline font-semibold">Home</button>
+          <span>/</span>
+          <span id="crumb-category" class="text-slate-600 font-medium">Financial Calculators</span>
+          <span>/</span>
+          <span id="crumb-title" class="text-[#003366] font-bold">Mortgage Calculator</span>
+        </div>
+        <button type="button" onclick="navigateTo('home')" class="text-[#004488] hover:underline font-bold flex items-center gap-1">
+          ← Return to Calculator Directory
+        </button>
+      </nav>
+
+      <!-- Main Calculator + Right Sticky Skyscraper Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left 8 Columns: Active Calculator Engine + In-Content Ad + EEAT Docs -->
+        <div class="lg:col-span-8 space-y-6">
+          
+          <!-- Calculator Title & Intro -->
+          <div class="border-b border-slate-200 pb-3">
+            <h2 id="active-calc-heading" class="text-2xl font-extrabold text-[#003366]">Mortgage &amp; Amortization Calculator</h2>
+            <p id="active-calc-subtitle" class="text-sm text-slate-600 mt-1"></p>
+          </div>
+
+          <!-- Dynamic Interactive Calculator Container -->
+          <div id="calc-engine-mount"></div>
+
+          <!-- 3. IN-CONTENT AD UNIT (728x90 / 300x250) positioned directly between calculation results and educational formula section -->
+          <div id="ad-in-content" class="ad-slot-wrapper py-1">
+            <div class="ad-unit-box ad-incontent">
+              <div class="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-slate-500">
+                <span class="px-1.5 py-0.5 bg-slate-200 text-slate-700 rounded font-semibold">Advertisement</span>
+                <span>In-Content Banner • 728 × 90 / 300 × 250 Placement</span>
+              </div>
+              <div class="text-xs sm:text-sm font-semibold text-slate-700 mt-1">
+                Contextual Mid-Page Ad Unit (<code class="text-[11px] bg-white px-1 py-0.5 rounded border border-slate-300">#ad-in-content</code>) — Placed Between Calculation Output &amp; Mathematical Documentation
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. TECHNICAL DOCUMENTATION & EEAT SEO LAYER -->
+          <section id="eeat-doc-card" class="bg-white border border-[#c5d4e3] rounded-md shadow-sm overflow-hidden">
+            <div class="bg-[#003366] text-white px-4 py-2.5 flex items-center justify-between">
+              <h3 class="font-bold text-sm sm:text-base">Technical Documentation, Mathematical Formula &amp; Variable Guide</h3>
+              <span class="text-[11px] bg-[#2e5b88] px-2 py-0.5 rounded font-mono">EEAT Verified Math</span>
+            </div>
+            <div class="p-5 space-y-5">
+              <!-- Standard Mathematical Formula Monospace Block -->
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-[#006622] mb-2">Standard Mathematical Formula</h4>
+                <pre id="eeat-formula-block" class="bg-slate-900 text-emerald-300 p-4 rounded text-xs sm:text-sm font-mono overflow-x-auto leading-relaxed border border-slate-700"></pre>
+              </div>
+
+              <!-- Variable Breakdown & Real-World Steps -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-[#f4f7fb] border border-[#d0dce8] rounded p-3.5">
+                  <h4 class="text-xs font-bold uppercase tracking-wider text-[#003366] mb-2">Variable Definitions</h4>
+                  <ul id="eeat-variables-list" class="text-xs sm:text-sm space-y-1.5 text-slate-700"></ul>
+                </div>
+                <div class="bg-[#f4f7fb] border border-[#d0dce8] rounded p-3.5">
+                  <h4 class="text-xs font-bold uppercase tracking-wider text-[#003366] mb-2">Real-World Calculation Steps</h4>
+                  <ol id="eeat-steps-list" class="text-xs sm:text-sm space-y-1.5 text-slate-700 list-decimal list-inside"></ol>
+                </div>
+              </div>
+
+              <!-- Interactive FAQ Accordion -->
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-[#006622] mb-2.5">Frequently Asked Questions (FAQ)</h4>
+                <div id="eeat-faq-accordion" class="space-y-2"></div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- Right 4 Columns: Sticky Desktop Sidebar Skyscraper (300x600) + Related Links -->
+        <aside class="lg:col-span-4 space-y-5 lg:sticky lg:top-16">
+          
+          <!-- Quick Switcher Card -->
+          <div class="bg-[#f4f7fb] border border-[#c5d4e3] rounded-md p-4">
+            <h3 class="text-sm font-bold text-[#003366] border-b border-[#c5d4e3] pb-2 mb-2.5">Related Calculators</h3>
+            <ul id="sidebar-related-links" class="space-y-1.5 text-sm"></ul>
+          </div>
+
+          <!-- 2. DESKTOP SIDEBAR SKYSCRAPER (300x600 Sticky Container) -->
+          <div id="ad-sidebar-skyscraper" class="ad-slot-wrapper flex justify-center">
+            <div class="ad-unit-box ad-skyscraper">
+              <div class="px-2 py-0.5 bg-slate-200 text-slate-700 rounded text-[10px] font-mono uppercase tracking-widest font-semibold mb-2">
+                Advertisement
+              </div>
+              <div class="text-sm font-bold text-[#003366] mb-1">Desktop Sidebar Skyscraper</div>
+              <div class="text-xs font-mono text-slate-600 mb-4">300 × 600 Sticky Ad Container</div>
+              <div class="w-4/5 border-t border-dashed border-slate-300 my-2"></div>
+              <p class="text-xs text-slate-500 px-3 leading-relaxed">
+                Sticky right-rail programmatic slot (<code class="text-[11px] bg-white px-1 py-0.5 rounded border border-slate-300">#ad-sidebar-skyscraper</code>). Remains in viewport alongside interactive schedules and documentation.
+              </p>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#003366] text-blue-100 text-xs mt-12 border-t-4 border-[#66cc33]">
+    <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-white text-sm">Calculator Pro<span class="brand-pro">.pro</span></span>
+        <span>— Precision Financial, Health &amp; Scientific Calculation Platform</span>
+      </div>
+      <div class="flex flex-wrap gap-4">
+        <button type="button" data-nav="home" onclick="navigateTo('home')" class="hover:underline text-blue-200">Home Directory</button>
+        <button type="button" data-nav="mortgage" onclick="navigateTo('mortgage')" class="hover:underline text-blue-200">Mortgage</button>
+        <button type="button" data-nav="loan" onclick="navigateTo('loan')" class="hover:underline text-blue-200">Loan</button>
+        <button type="button" data-nav="compound" onclick="navigateTo('compound')" class="hover:underline text-blue-200">Compound Interest</button>
+        <button type="button" data-nav="bmi" onclick="navigateTo('bmi')" class="hover:underline text-blue-200">BMI</button>
+        <button type="button" data-nav="age" onclick="navigateTo('age')" class="hover:underline text-blue-200">Age</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- COMPLETE CLIENT-SIDE JAVASCRIPT ENGINE -->
+  <script>
+    const APP_STATE = {
+      currentView: 'home',
+      currency: 'USD',
+      adPreview: true,
+      bmiUnit: 'metric',
+      calUnit: 'metric',
+      activeChartInstance: null,
+      lastAmortizationRows: [],
+      sci: {
+        display: '0',
+        expression: '',
+        angleMode: 'DEG',
+        memory: 0,
+        ans: 0,
+        waitingForOperand: false,
+        pendingOp: null,
+        pendingValue: null,
+        justEvaluated: false,
+        mrClickedOnce: false
+      }
+    };
+
+    const CURRENCY_MAP = {
+      USD: { symbol: '$', code: 'USD', locale: 'en-US' },
+      INR: { symbol: '₹', code: 'INR', locale: 'en-IN' },
+      EUR: { symbol: '€', code: 'EUR', locale: 'de-DE' },
+      GBP: { symbol: '£', code: 'GBP', locale: 'en-GB' }
+    };
+
+    function getCurrencySymbol() {
+      return CURRENCY_MAP[APP_STATE.currency].symbol;
+    }
+
+    function fmtMoney(amount, decimals = 2) {
+      const val = Number.isFinite(amount) ? amount : 0;
+      const info = CURRENCY_MAP[APP_STATE.currency];
+      const absFormatted = Math.abs(val).toLocaleString(info.locale, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+      return (val < 0 ? '-' : '') + info.symbol + absFormatted;
+    }
+
+    function fmtNumber(val, decimals = 2) {
+      const num = Number.isFinite(val) ? val : 0;
+      return num.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function handleCurrencyChange(newCurr) {
+      if (!CURRENCY_MAP[newCurr]) return;
+      APP_STATE.currency = newCurr;
+      const sym = getCurrencySymbol();
+      const indicator = document.getElementById('active-currency-indicator');
+      if (indicator) {
+        indicator.textContent = 'Active Currency: ' + newCurr + ' (' + sym + ')';
+      }
+      document.querySelectorAll('.curr-sym').forEach(el => {
+        el.textContent = sym;
+      });
+      if (APP_STATE.currentView !== 'home') {
+        runActiveCalculator();
+      }
+    }
+
+    function updateSciScreen() {
+      const dispEl = document.getElementById('sci-display');
+      const exprEl = document.getElementById('sci-expression');
+      const modeBadge = document.getElementById('sci-mode-badge');
+      const memBadge = document.getElementById('sci-mem-badge');
+      const ansBadge = document.getElementById('sci-ans-badge');
+      const degInd = document.getElementById('sci-deg-indicator');
+      const radInd = document.getElementById('sci-rad-indicator');
+
+      if (dispEl) dispEl.textContent = APP_STATE.sci.display;
+      if (exprEl) exprEl.textContent = APP_STATE.sci.expression || 'Ready';
+      if (modeBadge) modeBadge.textContent = APP_STATE.sci.angleMode;
+      if (memBadge) memBadge.textContent = 'M: ' + fmtNumber(APP_STATE.sci.memory, 4);
+      if (ansBadge) ansBadge.textContent = 'Ans: ' + fmtNumber(APP_STATE.sci.ans, 4);
+
+      if (degInd && radInd) {
+        if (APP_STATE.sci.angleMode === 'DEG') {
+          degInd.textContent = '(•) Deg';
+          degInd.className = 'font-bold text-[#003366]';
+          radInd.textContent = '( ) Rad';
+          radInd.className = 'text-slate-500';
+        } else {
+          degInd.textContent = '( ) Deg';
+          degInd.className = 'text-slate-500';
+          radInd.textContent = '(•) Rad';
+          radInd.className = 'font-bold text-[#003366]';
+        }
+      }
+
+      const mirrorDisp = document.getElementById('sci-page-mirror-display');
+      if (mirrorDisp) mirrorDisp.textContent = APP_STATE.sci.display;
+    }
+
+    function sciToggleAngleMode() {
+      APP_STATE.sci.angleMode = APP_STATE.sci.angleMode === 'DEG' ? 'RAD' : 'DEG';
+      updateSciScreen();
+    }
+
+    function sciDigit(d) {
+      APP_STATE.sci.mrClickedOnce = false;
+      if (APP_STATE.sci.waitingForOperand || APP_STATE.sci.justEvaluated) {
+        APP_STATE.sci.display = String(d);
+        APP_STATE.sci.waitingForOperand = false;
+        APP_STATE.sci.justEvaluated = false;
+      } else {
+        APP_STATE.sci.display = APP_STATE.sci.display === '0' ? String(d) : APP_STATE.sci.display + String(d);
+      }
+      updateSciScreen();
+    }
+
+    function sciDecimal() {
+      APP_STATE.sci.mrClickedOnce = false;
+      if (APP_STATE.sci.waitingForOperand || APP_STATE.sci.justEvaluated) {
+        APP_STATE.sci.display = '0.';
+        APP_STATE.sci.waitingForOperand = false;
+        APP_STATE.sci.justEvaluated = false;
+      } else if (!APP_STATE.sci.display.includes('.')) {
+        APP_STATE.sci.display += '.';
+      }
+      updateSciScreen();
+    }
+
+    function sciConstant(c) {
+      APP_STATE.sci.mrClickedOnce = false;
+      const val = c === 'pi' ? Math.PI : Math.E;
+      APP_STATE.sci.display = String(Number(val.toPrecision(12)));
+      APP_STATE.sci.waitingForOperand = false;
+      APP_STATE.sci.justEvaluated = true;
+      APP_STATE.sci.expression = c === 'pi' ? 'π' : 'e';
+      updateSciScreen();
+    }
+
+    function sciParen(p) {
+      APP_STATE.sci.mrClickedOnce = false;
+      if (p === '(') {
+        APP_STATE.sci.expression += '(';
+        APP_STATE.sci.waitingForOperand = true;
+      } else if (p === ')') {
+        APP_STATE.sci.expression += APP_STATE.sci.display + ')';
+        APP_STATE.sci.waitingForOperand = false;
+      }
+      updateSciScreen();
+    }
+
+    function toRadians(val) {
+      return APP_STATE.sci.angleMode === 'DEG' ? (val * Math.PI) / 180 : val;
+    }
+
+    function fromRadians(val) {
+      return APP_STATE.sci.angleMode === 'DEG' ? (val * 180) / Math.PI : val;
+    }
+
+    function factorial(n) {
+      if (n < 0 || !Number.isInteger(n)) return NaN;
+      if (n > 170) return Infinity;
+      let res = 1;
+      for (let i = 2; i <= n; i++) res *= i;
+      return res;
+    }
+
+    function formatSciOutput(num) {
+      if (!Number.isFinite(num)) return 'Error';
+      if (Math.abs(num) < 1e-12 && num !== 0) num = 0;
+      return String(Number(num.toPrecision(12)));
+    }
+
+    function sciAction(action) {
+      APP_STATE.sci.mrClickedOnce = false;
+      const current = parseFloat(APP_STATE.sci.display) || 0;
+      let result = current;
+      let label = '';
+
+      switch (action) {
+        case 'sin':
+          result = Math.sin(toRadians(current));
+          label = `sin(${current})`;
+          break;
+        case 'cos':
+          result = Math.cos(toRadians(current));
+          label = `cos(${current})`;
+          break;
+        case 'tan':
+          result = Math.tan(toRadians(current));
+          label = `tan(${current})`;
+          break;
+        case 'asin':
+          result = fromRadians(Math.asin(current));
+          label = `sin⁻¹(${current})`;
+          break;
+        case 'acos':
+          result = fromRadians(Math.acos(current));
+          label = `cos⁻¹(${current})`;
+          break;
+        case 'atan':
+          result = fromRadians(Math.atan(current));
+          label = `tan⁻¹(${current})`;
+          break;
+        case 'square':
+          result = current * current;
+          label = `(${current})²`;
+          break;
+        case 'cube':
+          result = current * current * current;
+          label = `(${current})³`;
+          break;
+        case 'exp':
+          result = Math.exp(current);
+          label = `e^(${current})`;
+          break;
+        case 'pow10':
+          result = Math.pow(10, current);
+          label = `10^(${current})`;
+          break;
+        case 'sqrt':
+          result = current < 0 ? NaN : Math.sqrt(current);
+          label = `√(${current})`;
+          break;
+        case 'cbrt':
+          result = Math.cbrt(current);
+          label = `³√(${current})`;
+          break;
+        case 'ln':
+          result = current <= 0 ? NaN : Math.log(current);
+          label = `ln(${current})`;
+          break;
+        case 'log':
+          result = current <= 0 ? NaN : Math.log10(current);
+          label = `log(${current})`;
+          break;
+        case 'inv':
+          result = current === 0 ? NaN : 1 / current;
+          label = `1/(${current})`;
+          break;
+        case 'percent':
+          result = current / 100;
+          label = `${current}%`;
+          break;
+        case 'fact':
+          result = factorial(Math.round(current));
+          label = `${Math.round(current)}!`;
+          break;
+        case 'negate':
+          result = -current;
+          APP_STATE.sci.display = formatSciOutput(result);
+          updateSciScreen();
+          return;
+        case 'rnd':
+          result = Number(Math.random().toFixed(8));
+          label = 'RND';
+          break;
+        case 'ans':
+          result = APP_STATE.sci.ans;
+          label = 'Ans';
+          break;
+        case 'EXP':
+          if (!APP_STATE.sci.display.includes('e')) {
+            APP_STATE.sci.display += 'e+';
+            APP_STATE.sci.waitingForOperand = false;
+            updateSciScreen();
+          }
+          return;
+        case 'back':
+          if (APP_STATE.sci.display.length > 1 && APP_STATE.sci.display !== 'Error') {
+            APP_STATE.sci.display = APP_STATE.sci.display.slice(0, -1);
+          } else {
+            APP_STATE.sci.display = '0';
+          }
+          updateSciScreen();
+          return;
+      }
+
+      APP_STATE.sci.display = formatSciOutput(result);
+      if (Number.isFinite(result)) {
+        APP_STATE.sci.ans = result;
+      }
+      APP_STATE.sci.expression = `${label} =`;
+      APP_STATE.sci.justEvaluated = true;
+      updateSciScreen();
+    }
+
+    function evaluateBinary(a, b, op) {
+      switch (op) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/': return b === 0 ? NaN : a / b;
+        case '^': return Math.pow(a, b);
+        case 'yroot': return b === 0 ? NaN : Math.pow(a, 1 / b);
+        default: return b;
+      }
+    }
+
+    function sciOperator(op) {
+      APP_STATE.sci.mrClickedOnce = false;
+      const inputValue = parseFloat(APP_STATE.sci.display) || 0;
+
+      if (APP_STATE.sci.pendingValue === null) {
+        APP_STATE.sci.pendingValue = inputValue;
+      } else if (APP_STATE.sci.pendingOp && !APP_STATE.sci.waitingForOperand) {
+        const computed = evaluateBinary(APP_STATE.sci.pendingValue, inputValue, APP_STATE.sci.pendingOp);
+        APP_STATE.sci.pendingValue = computed;
+        APP_STATE.sci.display = formatSciOutput(computed);
+      }
+
+      const opSymbols = { '+': '+', '-': '−', '*': '×', '/': '÷', '^': '^', 'yroot': 'ʸ√' };
+      APP_STATE.sci.pendingOp = op;
+      APP_STATE.sci.waitingForOperand = true;
+      APP_STATE.sci.justEvaluated = false;
+      APP_STATE.sci.expression = `${formatSciOutput(APP_STATE.sci.pendingValue)} ${opSymbols[op] || op}`;
+      updateSciScreen();
+    }
+
+    function sciEquals() {
+      APP_STATE.sci.mrClickedOnce = false;
+      const inputValue = parseFloat(APP_STATE.sci.display) || 0;
+      if (APP_STATE.sci.pendingOp !== null && APP_STATE.sci.pendingValue !== null) {
+        const opSymbols = { '+': '+', '-': '−', '*': '×', '/': '÷', '^': '^', 'yroot': 'ʸ√' };
+        const a = APP_STATE.sci.pendingValue;
+        const op = APP_STATE.sci.pendingOp;
+        const result = evaluateBinary(a, inputValue, op);
+        APP_STATE.sci.expression = `${formatSciOutput(a)} ${opSymbols[op] || op} ${formatSciOutput(inputValue)} =`;
+        APP_STATE.sci.display = formatSciOutput(result);
+        if (Number.isFinite(result)) {
+          APP_STATE.sci.ans = result;
+        }
+        APP_STATE.sci.pendingOp = null;
+        APP_STATE.sci.pendingValue = null;
+        APP_STATE.sci.waitingForOperand = false;
+        APP_STATE.sci.justEvaluated = true;
+      } else {
+        APP_STATE.sci.ans = inputValue;
+        APP_STATE.sci.expression = `${formatSciOutput(inputValue)} =`;
+        APP_STATE.sci.justEvaluated = true;
+      }
+      updateSciScreen();
+    }
+
+    function sciClear() {
+      APP_STATE.sci.display = '0';
+      APP_STATE.sci.expression = '';
+      APP_STATE.sci.pendingOp = null;
+      APP_STATE.sci.pendingValue = null;
+      APP_STATE.sci.waitingForOperand = false;
+      APP_STATE.sci.justEvaluated = false;
+      APP_STATE.sci.mrClickedOnce = false;
+      updateSciScreen();
+    }
+
+    function sciMemory(action) {
+      const current = parseFloat(APP_STATE.sci.display) || 0;
+      if (action === 'M+') {
+        APP_STATE.sci.memory += current;
+        APP_STATE.sci.mrClickedOnce = false;
+        APP_STATE.sci.justEvaluated = true;
+      } else if (action === 'M-') {
+        APP_STATE.sci.memory -= current;
+        APP_STATE.sci.mrClickedOnce = false;
+        APP_STATE.sci.justEvaluated = true;
+      } else if (action === 'MR') {
+        if (APP_STATE.sci.mrClickedOnce) {
+          APP_STATE.sci.memory = 0;
+          APP_STATE.sci.mrClickedOnce = false;
+          APP_STATE.sci.expression = 'Memory Cleared (MC)';
+        } else {
+          APP_STATE.sci.display = formatSciOutput(APP_STATE.sci.memory);
+          APP_STATE.sci.mrClickedOnce = true;
+          APP_STATE.sci.justEvaluated = true;
+          APP_STATE.sci.expression = 'Memory Recall (click MR again to clear)';
+        }
+      }
+      updateSciScreen();
+    }
+
+    const ALL_CALCULATORS_INDEX = [
+      { id: 'mortgage', title: 'Mortgage Calculator', category: 'Financial Calculators', keywords: 'mortgage home loan p&i amortization tax insurance house' },
+      { id: 'loan', title: 'Loan Calculator', category: 'Financial Calculators', keywords: 'personal loan installment extra payment interest saved payoff' },
+      { id: 'autoloan', title: 'Auto Loan Calculator', category: 'Financial Calculators', keywords: 'auto car vehicle loan trade-in sales tax' },
+      { id: 'compound', title: 'Compound Interest', category: 'Financial Calculators', keywords: 'compound interest investment future value savings apy' },
+      { id: 'amortization', title: 'Amortization Calculator', category: 'Financial Calculators', keywords: 'amortization schedule principal interest table csv' },
+      { id: 'bmi', title: 'BMI Calculator', category: 'Fitness & Health Calculators', keywords: 'bmi body mass index weight height who category' },
+      { id: 'calorie', title: 'Calorie Calculator', category: 'Fitness & Health Calculators', keywords: 'calorie tdee bmr diet maintenance fat loss muscle gain' },
+      { id: 'bodyfat', title: 'Body Fat Calculator', category: 'Fitness & Health Calculators', keywords: 'body fat percentage navy waist neck hip lean mass' },
+      { id: 'bmr', title: 'BMR Calculator', category: 'Fitness & Health Calculators', keywords: 'bmr basal metabolic rate mifflin st jeor resting calories' },
+      { id: 'idealweight', title: 'Ideal Weight Calculator', category: 'Fitness & Health Calculators', keywords: 'ideal weight devine robinson miller healthy weight' },
+      { id: 'scientific', title: 'Scientific Calculator', category: 'Math Calculators', keywords: 'scientific trig sin cos tan log exponent factorial root' },
+      { id: 'percentage', title: 'Percentage Calculator', category: 'Math Calculators', keywords: 'percentage percent increase decrease ratio change' },
+      { id: 'fraction', title: 'Fraction Calculator', category: 'Math Calculators', keywords: 'fraction numerator denominator simplify mixed number' },
+      { id: 'random', title: 'Random Number Generator', category: 'Math Calculators', keywords: 'random number generator rng integer dice roll' },
+      { id: 'age', title: 'Age Calculator', category: 'Other Calculators', keywords: 'age chronological birthday days lived next birthday' },
+      { id: 'date', title: 'Date Calculator', category: 'Other Calculators', keywords: 'date difference days between add subtract calendar' },
+      { id: 'time', title: 'Time Calculator', category: 'Other Calculators', keywords: 'time hours minutes seconds add subtract duration' },
+      { id: 'gpa', title: 'GPA Calculator', category: 'Other Calculators', keywords: 'gpa grade point average college credits course grades' }
+    ];
+
+    function handleDirectorySearch(query) {
+      const q = (query || '').trim().toLowerCase();
+      const feedbackBox = document.getElementById('search-feedback-box');
+      const chipsBox = document.getElementById('search-quick-chips');
+      const countLabel = document.getElementById('search-count-label');
+
+      const items = document.querySelectorAll('[data-link-item]');
+      items.forEach(li => {
+        const text = (li.getAttribute('data-link-item') || '').toLowerCase();
+        if (!q || text.includes(q)) {
+          li.classList.remove('hidden');
+        } else {
+          li.classList.add('hidden');
+        }
+      });
+
+      if (!q) {
+        if (feedbackBox) feedbackBox.classList.add('hidden');
+        return;
+      }
+
+      const matches = ALL_CALCULATORS_INDEX.filter(item =>
+        item.title.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q) ||
+        item.keywords.includes(q)
+      );
+
+      if (feedbackBox && chipsBox && countLabel) {
+        feedbackBox.classList.remove('hidden');
+        countLabel.textContent = `Found ${matches.length} matching calculator${matches.length === 1 ? '' : 's'}:`;
+        if (matches.length === 0) {
+          chipsBox.innerHTML = `<span class="text-slate-500 italic">No calculators matched "${q}". Try "Loan", "BMI", "Percentage", or "Age".</span>`;
+        } else {
+          chipsBox.innerHTML = matches.map(m =>
+            `<button type="button" onclick="navigateTo('${m.id}')" class="px-2.5 py-1 bg-[#003366] text-white rounded text-xs font-semibold hover:bg-[#2e5b88]">${m.title}</button>`
+          ).join('');
+        }
+      }
+    }
+
+    function triggerDirectorySearch() {
+      const input = document.getElementById('directory-search-input');
+      if (!input) return;
+      const q = input.value.trim().toLowerCase();
+      handleDirectorySearch(q);
+      if (q) {
+        const firstMatch = ALL_CALCULATORS_INDEX.find(item =>
+          item.title.toLowerCase().includes(q) || item.keywords.includes(q)
+        );
+        if (firstMatch && APP_STATE.currentView !== 'home') {
+          navigateTo(firstMatch.id);
+        }
+      }
+    }
+
+    function clearDirectorySearch() {
+      const input = document.getElementById('directory-search-input');
+      if (input) input.value = '';
+      handleDirectorySearch('');
+    }
+
+    const CALCULATOR_DEFINITIONS = {
+      mortgage: {
+        title: 'Mortgage & Amortization Calculator',
+        category: 'Financial Calculators',
+        subtitle: 'Calculate exact monthly P&I, property taxes, homeowners insurance, visual cost breakdown, and exportable full amortization schedule.',
+        formula: `M = P × [ r(1 + r)^n ] / [ (1 + r)^n - 1 ]  +  (T / 12)  +  (I / 12)\nwhere P = Home Price - Down Payment, r = (Annual Rate / 100) / 12, n = Term Years × 12`,
+        variables: [
+          '<strong>M</strong>: Total Monthly Mortgage Payment (Principal, Interest, Taxes & Insurance)',
+          '<strong>P</strong>: Principal Loan Amount (Home Price minus Down Payment)',
+          '<strong>r</strong>: Monthly Interest Rate (Annual Nominal Rate divided by 12)',
+          '<strong>n</strong>: Total Number of Monthly Payments (Loan Term in Years × 12)',
+          '<strong>T &amp; I</strong>: Annual Property Taxes and Annual Homeowners Insurance'
+        ],
+        steps: [
+          'Subtract your Down Payment from the Home Price to determine net Principal (P).',
+          'Convert the annual interest rate to a monthly decimal rate r = (APR / 100) / 12.',
+          'Compute the fixed monthly Principal & Interest (P&I) installment using the standard annuity formula.',
+          'Add monthly escrow allocations (Annual Property Tax / 12 + Annual Home Insurance / 12) for total PITI.'
+        ],
+        faqs: [
+          {
+            q: 'How does a 15-year mortgage compare to a 30-year mortgage?',
+            a: 'A 15-year mortgage carries a higher monthly Principal & Interest payment because principal is amortized over 180 months instead of 360 months, but it dramatically reduces total cumulative interest paid by more than 55%.'
+          },
+          {
+            q: 'Why does the interest portion decrease each month on the amortization schedule?',
+            a: 'Each month, interest is accrued strictly on the remaining unpaid principal balance (Balance × r). As principal is paid down, less interest accrues in the following month, accelerating equity buildup.'
+          },
+          {
+            q: 'Can I download the amortization table for spreadsheet analysis?',
+            a: 'Yes. Click the "Export CSV" button above the amortization table to download the complete schedule with payment periods, principal, interest, taxes/insurance, and remaining balance.'
+          }
+        ]
+      },
+      amortization: {
+        title: 'Amortization Schedule Calculator',
+        category: 'Financial Calculators',
+        subtitle: 'Generate a precision month-by-month and year-by-year loan amortization schedule with principal vs. interest breakdown and CSV export.',
+        formula: `Interest_k = Balance_{k-1} × r\nPrincipal_k = M_{P&I} - Interest_k\nBalance_k = Balance_{k-1} - Principal_k`,
+        variables: [
+          '<strong>Balance_{k-1}</strong>: Remaining loan principal prior to payment k',
+          '<strong>r</strong>: Monthly periodic interest rate (Annual Rate / 12)',
+          '<strong>M_{P&I}</strong>: Fixed monthly principal and interest installment',
+          '<strong>Principal_k</strong>: Portion of payment k reducing the loan balance'
+        ],
+        steps: [
+          'Determine the fixed monthly installment using the standard loan amortization equation.',
+          'Multiply current remaining balance by the monthly interest rate to find the current period interest.',
+          'Subtract the monthly interest from the fixed payment to find the principal reduction.',
+          'Deduct principal reduction from the previous balance and repeat until the balance reaches zero.'
+        ],
+        faqs: [
+          {
+            q: 'What is loan amortization?',
+            a: 'Amortization is the process of paying off a debt over time through regular, fixed installments that cover both accrued interest and principal reduction.'
+          },
+          {
+            q: 'When does principal exceed interest in a typical 30-year mortgage?',
+            a: 'At a 6.5% interest rate on a 30-year term, the monthly principal portion surpasses the monthly interest portion around year 19 (month 228).'
+          }
+        ]
+      },
+      loan: {
+        title: 'Personal Loan Calculator',
+        category: 'Financial Calculators',
+        subtitle: 'Calculate monthly loan installments, total interest cost, exact payoff date, and total interest saved from extra monthly payments.',
+        formula: `M = L × [ r(1 + r)^n ] / [ (1 + r)^n - 1 ]\nAccelerated Payoff Months n* = -ln(1 - (L × r) / (M + E)) / ln(1 + r)`,
+        variables: [
+          '<strong>L</strong>: Total Loan Balance borrowed',
+          '<strong>r</strong>: Monthly periodic interest rate (APR / 12)',
+          '<strong>n</strong>: Original loan term in months',
+          '<strong>E</strong>: Optional Extra Monthly Payment applied directly to principal'
+        ],
+        steps: [
+          'Compute the baseline monthly installment M from Loan Balance (L), monthly rate (r), and months (n).',
+          'Simulate month-by-month amortization with and without the Extra Monthly Payment (E).',
+          'Compare cumulative interest under both schedules to calculate exact Interest Saved and Months Saved.'
+        ],
+        faqs: [
+          {
+            q: 'How do extra monthly payments reduce total loan interest?',
+            a: 'Every dollar of extra monthly payment goes 100% toward reducing the principal balance immediately, which lowers the interest charged in every subsequent month and shortens the payoff timeline.'
+          },
+          {
+            q: 'Is there a prepayment penalty on personal loans?',
+            a: 'Most modern unsecured personal loans do not charge prepayment penalties, allowing borrowers to make extra principal payments freely.'
+          }
+        ]
+      },
+      compound: {
+        title: 'Compound Interest & Investment Calculator',
+        category: 'Financial Calculators',
+        subtitle: 'Model long-term wealth accumulation with initial principal, recurring monthly contributions, and configurable compounding frequencies.',
+        formula: `FV = P × (1 + r/m)^(m×t)  +  PMT × [ ((1 + r/m)^(m×t) - 1) / (r/m) ]`,
+        variables: [
+          '<strong>FV</strong>: Total Future Balance at the end of the investment horizon',
+          '<strong>P</strong>: Initial Deposit (starting principal)',
+          '<strong>PMT</strong>: Regular periodic contribution converted to compounding period',
+          '<strong>r</strong>: Annual nominal rate of return (decimal)',
+          '<strong>m</strong>: Compounding frequency per year (1, 2, 4, 12, or 365)',
+          '<strong>t</strong>: Total investment duration in years'
+        ],
+        steps: [
+          'Divide the annual return rate (r) by the compounding frequency (m) to find the periodic rate.',
+          'Compound the initial deposit and add regular monthly contributions across every year.',
+          'Separate Total Principal Invested from Total Compound Interest Earned to visualize exponential growth.'
+        ],
+        faqs: [
+          {
+            q: 'How does compounding frequency affect total investment returns?',
+            a: 'More frequent compounding (e.g., monthly or daily vs. annually) credits earned interest back into the principal sooner, resulting in a slightly higher Effective Annual Yield (EAY).'
+          },
+          {
+            q: 'What is the Rule of 72?',
+            a: 'Dividing 72 by your annual percentage return gives an accurate estimate of how many years it takes for an initial lump-sum investment to double.'
+          }
+        ]
+      },
+      autoloan: {
+        title: 'Auto Loan Calculator',
+        category: 'Financial Calculators',
+        subtitle: 'Compute monthly car payments, net financed amount after down payment and trade-in credit, and state sales tax breakdown.',
+        formula: `Taxable Amount = max(0, Vehicle Price - Trade-In Value)\nSales Tax = Taxable Amount × (Tax Rate / 100)\nNet Financed Loan (P) = Vehicle Price + Sales Tax - Down Payment - Trade-In Value`,
+        variables: [
+          '<strong>Vehicle Price</strong>: Negotiated purchase price of the automobile',
+          '<strong>Down Payment &amp; Trade-In</strong>: Upfront cash and trade-in equity reducing financed principal',
+          '<strong>Sales Tax (%)</strong>: State/local motor vehicle tax rate',
+          '<strong>Term</strong>: Loan duration in months (typically 36, 48, 60, or 72 months)'
+        ],
+        steps: [
+          'Calculate sales tax on the net vehicle price after trade-in allowance.',
+          'Determine Net Financed Loan Amount by adding sales tax and subtracting Down Payment and Trade-In Value.',
+          'Amortize the financed amount over the selected 36–72 month term to find the exact monthly car payment.'
+        ],
+        faqs: [
+          {
+            q: 'Does trading in a vehicle lower my sales tax?',
+            a: 'In most jurisdictions, sales tax is calculated on the difference between the new vehicle price and your trade-in value, saving you tax on the trade-in equity.'
+          },
+          {
+            q: 'Why is a 60-month or 48-month term often preferred over 72 months?',
+            a: 'Shorter auto loan terms build equity faster than vehicle depreciation, preventing the borrower from becoming "upside-down" (owing more than the car is worth).'
+          }
+        ]
+      },
+      bmi: {
+        title: 'BMI & Body Composition Calculator',
+        category: 'Fitness & Health Calculators',
+        subtitle: 'Compute Body Mass Index (BMI), World Health Organization (WHO) weight classification, BMI Prime, and healthy target weight range.',
+        formula: `Metric:   BMI = Weight (kg) / [ Height (m) ]²\nImperial: BMI = 703 × Weight (lbs) / [ Height (in) ]²\nHealthy Weight Range = 18.5 × Height(m)²  to  24.9 × Height(m)²`,
+        variables: [
+          '<strong>Weight</strong>: Body mass in kilograms (kg) or pounds (lbs)',
+          '<strong>Height</strong>: Stature in centimeters/meters (cm/m) or feet and inches (ft/in)',
+          '<strong>BMI Prime</strong>: Ratio of measured BMI to the upper normal limit (BMI / 25.0)'
+        ],
+        steps: [
+          'Convert height into meters (or total inches in Imperial mode).',
+          'Divide weight by height squared (multiplying by 703 for Imperial units).',
+          'Map the resulting BMI score against official WHO adult thresholds (<18.5 Underweight, 18.5–24.9 Normal, 25–29.9 Overweight, ≥30 Obese).'
+        ],
+        faqs: [
+          {
+            q: 'What are the standard WHO BMI categories for adults?',
+            a: 'Underweight is below 18.5 kg/m², Normal weight is 18.5 to 24.9 kg/m², Overweight is 25.0 to 29.9 kg/m², and Obesity is 30.0 kg/m² or higher.'
+          },
+          {
+            q: 'Does BMI distinguish between muscle mass and fat mass?',
+            a: 'BMI is a screening measure of weight-for-height and does not directly measure body fat percentage; strength athletes may have an elevated BMI despite low body fat.'
+          }
+        ]
+      },
+      calorie: {
+        title: 'Daily Calorie & TDEE Calculator',
+        category: 'Fitness & Health Calculators',
+        subtitle: 'Calculate Basal Metabolic Rate (Mifflin-St Jeor equation), Total Daily Energy Expenditure (TDEE), and calorie targets for fat loss or muscle gain.',
+        formula: `Male BMR   = (10 × weight_kg) + (6.25 × height_cm) - (5 × age) + 5\nFemale BMR = (10 × weight_kg) + (6.25 × height_cm) - (5 × age) - 161\nTDEE = BMR × Activity Multiplier (1.2 to 1.9)`,
+        variables: [
+          '<strong>BMR</strong>: Basal Metabolic Rate (calories burned at complete rest)',
+          '<strong>Activity Multiplier</strong>: Physical activity factor from Sedentary (1.2) to Extra Active (1.9)',
+          '<strong>TDEE</strong>: Daily Maintenance Calories required to maintain current body weight',
+          '<strong>Fat Loss / Muscle Gain</strong>: TDEE − 500 kcal/day (~1 lb/wk loss) and TDEE + 300 kcal/day (lean surplus)'
+        ],
+        steps: [
+          'Compute resting Basal Metabolic Rate (BMR) using the clinically validated Mifflin-St Jeor equation.',
+          'Multiply BMR by your lifestyle activity factor to obtain Daily Maintenance Calories (TDEE).',
+          'Subtract 500 kcal for sustainable fat loss or add 300 kcal for lean muscle hypertrophy.'
+        ],
+        faqs: [
+          {
+            q: 'Why is the Mifflin-St Jeor formula preferred over Harris-Benedict?',
+            a: 'Clinical nutrition studies by the Academy of Nutrition and Dietetics found Mifflin-St Jeor to be the most accurate predictive equation for estimating resting energy expenditure in healthy adults.'
+          },
+          {
+            q: 'Why is a 500 kcal daily deficit recommended for fat loss?',
+            a: 'One pound of adipose tissue stores roughly 3,500 kcal; a 500 kcal daily deficit creates a 3,500 kcal weekly deficit (~1 lb/week loss) while preserving lean muscle mass.'
+          }
+        ]
+      },
+      percentage: {
+        title: 'Percentage Calculator (3-in-1 Suite)',
+        category: 'Math Calculators',
+        subtitle: 'Solve all three core percentage problems simultaneously: X% of Y, what percent X is of Y, and percentage increase/decrease from X to Y.',
+        formula: `1) Value = (X / 100) × Y\n2) Percentage = (X / Y) × 100%\n3) % Change = [ (Y - X) / |X| ] × 100%`,
+        variables: [
+          '<strong>X% of Y</strong>: Multiplies base number Y by decimal ratio X/100',
+          '<strong>X is what % of Y</strong>: Computes relative proportion of part X to whole Y',
+          '<strong>% Change (X → Y)</strong>: Measures relative growth (+) or reduction (−) from initial value X'
+        ],
+        steps: [
+          'Enter inputs in any of the three sub-tools below to compute instant real-time results.',
+          'Inspect the step-by-step substitution equation displayed beside each sub-tool output.'
+        ],
+        faqs: [
+          {
+            q: 'What is the difference between percentage change and percentage difference?',
+            a: 'Percentage change measures directional growth or decline from a specific starting value X to a new value Y, dividing by |X|. Percentage difference divides the absolute difference by the average of the two numbers.'
+          },
+          {
+            q: 'Why does a 20% increase followed by a 20% decrease not return to 100?',
+            a: 'Increasing 100 by 20% yields 120; decreasing 120 by 20% subtracts 24 (20% of 120), resulting in 96—a net 4% reduction.'
+          }
+        ]
+      },
+      age: {
+        title: 'Exact Age & Chronological Date Calculator',
+        category: 'Other Calculators',
+        subtitle: 'Calculate exact chronological age in years, months, and days, total days lived, day of the week born, and countdown to next birthday.',
+        formula: `Chronological Age = (Y_target - Y_birth) years, (M_target - M_birth) months, (D_target - D_birth) days\nTotal Days Lived = floor((UTC(Target Date) - UTC(Birth Date)) / 86,400,000 ms)`,
+        variables: [
+          '<strong>Date of Birth</strong>: Starting calendar date (YYYY-MM-DD)',
+          '<strong>Target Date</strong>: Comparison date (defaults to current calendar date)',
+          '<strong>Total Days Lived</strong>: Exact elapsed solar days accounting for leap years (366-day years)'
+        ],
+        steps: [
+          'Compare birth year, month, and day against the target date, borrowing exact calendar month days when D_target < D_birth.',
+          'Compute exact UTC timestamp difference divided by 86,400,000 ms per day to count total days lived including leap days.',
+          'Determine the next birthday occurrence and calculate the exact remaining calendar days.'
+        ],
+        faqs: [
+          {
+            q: 'How does the calculator handle leap years like February 29?',
+            a: 'It uses exact calendar month lengths (28 or 29 days in February depending on whether the year is divisible by 4, excluding century years not divisible by 400) and UTC timestamps.'
+          },
+          {
+            q: 'Can I calculate my exact age on a future or historical date?',
+            a: 'Yes. Change the "Age at the Date of" input to any future or past date to see your exact chronological age on that day.'
+          }
+        ]
+      },
+      bodyfat: {
+        title: 'Body Fat Percentage Calculator (U.S. Navy Method)',
+        category: 'Fitness & Health Calculators',
+        subtitle: 'Estimate body fat percentage, fat mass, and lean body mass using the circumference-based U.S. Navy anthropometric method.',
+        formula: `Male %BF   = 495 / (1.0324 - 0.19077 × log10(waist - neck) + 0.15456 × log10(height)) - 450\nFemale %BF = 495 / (1.29579 - 0.35004 × log10(waist + hip - neck) + 0.22100 × log10(height)) - 450`,
+        variables: [
+          '<strong>Waist, Neck &amp; Hip (cm)</strong>: Tape measurements at navel, below larynx, and widest hip point',
+          '<strong>Fat Mass</strong>: Total Weight × (Body Fat % / 100)',
+          '<strong>Lean Body Mass</strong>: Total Weight − Fat Mass'
+        ],
+        steps: [
+          'Measure neck, waist, and (for females) hip circumferences in centimeters.',
+          'Apply the Hodgdon & Beckett U.S. Navy logarithmic density equation.',
+          'Subtract Fat Mass from total weight to find Lean Body Mass.'
+        ],
+        faqs: [
+          {
+            q: 'How accurate is the U.S. Navy circumference method?',
+            a: 'Validation studies show the U.S. Navy tape test estimates body fat within 3–4% of DEXA scans when circumference measurements are taken consistently.'
+          },
+          {
+            q: 'What is a healthy body fat percentage range?',
+            a: 'For adult men, fitness/healthy ranges are 14%–24%; for adult women, fitness/healthy ranges are 21%–31%.'
+          }
+        ]
+      },
+      bmr: {
+        title: 'BMR Calculator (Basal Metabolic Rate)',
+        category: 'Fitness & Health Calculators',
+        subtitle: 'Calculate resting metabolic energy expenditure using both Mifflin-St Jeor and Revised Harris-Benedict formulas.',
+        formula: `Mifflin-St Jeor: BMR = 10W + 6.25H - 5A + s  (s = +5 for Men, -161 for Women)`,
+        variables: [
+          '<strong>W</strong>: Body weight in kilograms (kg)',
+          '<strong>H</strong>: Height in centimeters (cm)',
+          '<strong>A</strong>: Age in years'
+        ],
+        steps: [
+          'Enter gender, age, height (cm), and weight (kg).',
+          'Compare resting BMR across activity multipliers from sedentary to athlete.'
+        ],
+        faqs: [
+          {
+            q: 'What percentage of daily calories does BMR account for?',
+            a: 'Basal Metabolic Rate typically accounts for 60% to 75% of total daily calorie expenditure in most individuals.'
+          },
+          {
+            q: 'Does muscle mass increase BMR?',
+            a: 'Yes. Skeletal muscle tissue is metabolically active at rest, burning roughly 6 kcal/lb per day compared to 2 kcal/lb for fat tissue.'
+          }
+        ]
+      },
+      idealweight: {
+        title: 'Ideal Weight Calculator',
+        category: 'Fitness & Health Calculators',
+        subtitle: 'Compare healthy ideal body weight estimates across the Devine, Robinson, Miller, and WHO BMI formulas.',
+        formula: `Devine (Male):   50.0 kg + 2.3 kg × (Height_in - 60)\nDevine (Female): 45.5 kg + 2.3 kg × (Height_in - 60)`,
+        variables: [
+          '<strong>Height_in</strong>: Total stature in inches (1 inch = 2.54 cm)',
+          '<strong>Devine / Robinson / Miller</strong>: Clinical reference weight equations'
+        ],
+        steps: [
+          'Convert height into inches over 5 feet (60 inches).',
+          'Evaluate Devine (1974), Robinson (1983), Miller (1983), and WHO Normal BMI weight bounds.'
+        ],
+        faqs: [
+          {
+            q: 'Why was the Devine formula created?',
+            a: 'Dr. Ben Devine developed the equation in 1974 to calculate medication dosages based on lean body weight relative to height.'
+          },
+          {
+            q: 'Which formula gives the broadest range?',
+            a: 'The WHO healthy BMI range (18.5 to 24.9 kg/m²) provides a healthy weight interval rather than a single target number.'
+          }
+        ]
+      },
+      scientific: {
+        title: 'Scientific Calculator & Expression Evaluator',
+        category: 'Math Calculators',
+        subtitle: 'Full-featured scientific calculator synchronized with the 5×10 keypad above, featuring trigonometric, logarithmic, factorial, and power operations.',
+        formula: `sin²(θ) + cos²(θ) = 1   |   log_10(x) = ln(x) / ln(10)   |   n! = n × (n-1) × ... × 1`,
+        variables: [
+          '<strong>DEG / RAD</strong>: Angle unit mode (180° = π radians)',
+          '<strong>M+, M-, MR</strong>: Non-volatile memory accumulator registers',
+          '<strong>Ans</strong>: Stores the most recent evaluated result'
+        ],
+        steps: [
+          'Use the 5×10 Scientific Keypad in the top Hero section or the quick-test expression evaluator below.',
+          'Toggle between Degrees (•) Deg and Radians ( ) Rad before running trigonometric functions.'
+        ],
+        faqs: [
+          {
+            q: 'How do I compute an n-th root (ʸ√x) on the 5×10 keypad?',
+            a: 'Enter the radicand x first, press [ʸ√x], enter the root index y, and press [=]. For example: 81 → [ʸ√x] → 4 → [=] outputs 3.'
+          },
+          {
+            q: 'How do I clear the memory register (MR)?',
+            a: 'Click [MR] once to recall the stored memory value to the screen; click [MR] a second consecutive time to reset memory to 0.'
+          }
+        ]
+      },
+      fraction: {
+        title: 'Fraction Calculator',
+        category: 'Math Calculators',
+        subtitle: 'Add, subtract, multiply, and divide fractions with automatic Greatest Common Divisor (GCD) simplification and mixed-number conversion.',
+        formula: `a/b ± c/d = (a×d ± b×c) / (b×d)   |   (a/b) × (c/d) = (a×c) / (b×d)`,
+        variables: [
+          '<strong>a, c</strong>: Numerators of Fraction 1 and Fraction 2',
+          '<strong>b, d</strong>: Non-zero Denominators of Fraction 1 and Fraction 2',
+          '<strong>GCD(p, q)</strong>: Greatest Common Divisor used to reduce the result to lowest terms'
+        ],
+        steps: [
+          'Find a common denominator (b × d) for addition or subtraction.',
+          'Compute the resulting numerator and denominator.',
+          'Divide both numerator and denominator by their Greatest Common Divisor (Euclidean algorithm).'
+        ],
+        faqs: [
+          {
+            q: 'How does the calculator simplify fractions to lowest terms?',
+            a: 'It runs Euclid’s GCD algorithm on the numerator and denominator and divides both by their greatest common divisor.'
+          },
+          {
+            q: 'What happens if a denominator is set to zero?',
+            a: 'Division by zero is undefined in arithmetic; the calculator flags zero denominators immediately.'
+          }
+        ]
+      },
+      random: {
+        title: 'Random Number Generator',
+        category: 'Math Calculators',
+        subtitle: 'Generate uniform random integers or decimals within any custom lower and upper bound, with optional multi-number batch generation.',
+        formula: `X = floor( U × (Max - Min + 1) ) + Min,  where U ~ Uniform(0, 1)`,
+        variables: [
+          '<strong>Min &amp; Max</strong>: Inclusive lower and upper bounds',
+          '<strong>Count</strong>: Number of random values to generate in one batch'
+        ],
+        steps: [
+          'Specify the minimum and maximum bounds and how many numbers to draw.',
+          'Click Generate to sample uniform random outcomes and view batch statistics (mean, min, max).'
+        ],
+        faqs: [
+          {
+            q: 'Are the minimum and maximum bounds inclusive?',
+            a: 'Yes, both the Lower Limit (Min) and Upper Limit (Max) are strictly inclusive when generating random integers.'
+          },
+          {
+            q: 'Can I generate unique non-repeating numbers (like a lottery draw)?',
+            a: 'Yes, toggle "Allow Duplicates" to No to sample without replacement.'
+          }
+        ]
+      },
+      date: {
+        title: 'Date Duration & Add/Subtract Calculator',
+        category: 'Other Calculators',
+        subtitle: 'Calculate exact calendar duration between any two dates in years, months, weeks, and business days, or add/subtract days from a date.',
+        formula: `ΔDays = | UTC(Date_2) - UTC(Date_1) | / 86,400,000 ms`,
+        variables: [
+          '<strong>Start Date &amp; End Date</strong>: Calendar dates compared in UTC',
+          '<strong>Business Days</strong>: Elapsed weekdays excluding Saturdays and Sundays'
+        ],
+        steps: [
+          'Select a Start Date and End Date to calculate total calendar days, weeks, and business days.',
+          'Or use the Add/Subtract Days panel to project a future or past calendar date.'
+        ],
+        faqs: [
+          {
+            q: 'Does the business day count exclude weekends?',
+            a: 'Yes, the weekday counter iterates through the interval and excludes all Saturdays and Sundays.'
+          },
+          {
+            q: 'Does it account for leap years?',
+            a: 'Yes, exact calendar arithmetic automatically includes February 29 in leap years.'
+          }
+        ]
+      },
+      time: {
+        title: 'Time Duration & Arithmetic Calculator',
+        category: 'Other Calculators',
+        subtitle: 'Add or subtract two time durations in Days, Hours, Minutes, and Seconds with automatic base-60 carry and borrow.',
+        formula: `Total Seconds = (Days × 86,400) + (Hours × 3,600) + (Minutes × 60) + Seconds`,
+        variables: [
+          '<strong>d, h, m, s</strong>: Days, Hours (24h/day), Minutes (60m/hr), Seconds (60s/min)'
+        ],
+        steps: [
+          'Convert both time inputs into total seconds.',
+          'Add or subtract the total seconds and normalize back into Days, Hours, Minutes, and Seconds.'
+        ],
+        faqs: [
+          {
+            q: 'How are minutes or seconds greater than 59 handled?',
+            a: 'The calculator automatically carries excess seconds into minutes and excess minutes into hours and days.'
+          },
+          {
+            q: 'Can I convert the result into decimal hours for payroll?',
+            a: 'Yes, the output summary displays total decimal hours, total minutes, and total seconds.'
+          }
+        ]
+      },
+      gpa: {
+        title: 'College GPA Calculator (4.0 Scale)',
+        category: 'Other Calculators',
+        subtitle: 'Calculate semester and cumulative Grade Point Average (GPA) weighted by course credit hours on the standard 4.0 academic scale.',
+        formula: `GPA = Σ (Course Grade Points × Credit Hours) / Σ (Credit Hours)`,
+        variables: [
+          '<strong>Grade Points</strong>: A = 4.0, A- = 3.7, B+ = 3.3, B = 3.0, B- = 2.7, C+ = 2.3, C = 2.0, D = 1.0, F = 0.0',
+          '<strong>Credit Hours</strong>: Academic weight assigned to each course'
+        ],
+        steps: [
+          'Multiply each course’s numerical grade value by its credit hours to find Quality Points.',
+          'Sum all Quality Points and divide by Total Credit Hours attempted.'
+        ],
+        faqs: [
+          {
+            q: 'Why does a 4-credit course affect GPA more than a 1-credit lab?',
+            a: 'GPA is a credit-weighted average; a 4-credit course contributes four times as many quality points as a 1-credit course.'
+          },
+          {
+            q: 'How are A- and B+ grades weighted?',
+            a: 'Standard plus/minus grading assigns +0.3 for plus grades (e.g., B+ = 3.3) and -0.3 for minus grades (e.g., A- = 3.7).'
+          }
+        ]
+      }
+    };
+
+    let _lastNavTime = 0;
+    let _lastNavId = '';
+
+    function navigateTo(viewId) {
+      const now = Date.now();
+      if (viewId === _lastNavId && (now - _lastNavTime) < 40) return;
+      _lastNavTime = now;
+      _lastNavId = viewId;
+
+      const homeView = document.getElementById('view-home');
+      const calcView = document.getElementById('view-calculator');
+      const heroSection = document.getElementById('hero-section');
+      if (!homeView || !calcView) return;
+
+      if (viewId === 'home' || !CALCULATOR_DEFINITIONS[viewId]) {
+        APP_STATE.currentView = 'home';
+        homeView.classList.remove('hidden');
+        calcView.classList.add('hidden');
+        if (heroSection) heroSection.classList.remove('hidden');
+        if (APP_STATE.activeChartInstance) {
+          try { APP_STATE.activeChartInstance.destroy(); } catch (e) {}
+          APP_STATE.activeChartInstance = null;
+        }
+        try {
+          if (heroSection && heroSection.scrollIntoView) {
+            heroSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (e) {}
+        return;
+      }
+
+      APP_STATE.currentView = viewId;
+      homeView.classList.add('hidden');
+      calcView.classList.remove('hidden');
+
+      // Collapse hero section on non-scientific calculators so the selected calculator appears immediately at the top in Google Sites embeds
+      if (heroSection) {
+        if (viewId === 'scientific') {
+          heroSection.classList.remove('hidden');
+        } else {
+          heroSection.classList.add('hidden');
+        }
+      }
+
+      const def = CALCULATOR_DEFINITIONS[viewId];
+      document.getElementById('crumb-category').textContent = def.category;
+      document.getElementById('crumb-title').textContent = def.title;
+      document.getElementById('active-calc-heading').textContent = def.title;
+      document.getElementById('active-calc-subtitle').textContent = def.subtitle;
+
+      renderCalculatorTemplate(viewId);
+      renderEEATDocumentation(viewId);
+      renderSidebarRelated(viewId);
+      runActiveCalculator();
+
+      try {
+        calcView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (e) {}
+    }
+
+    function renderEEATDocumentation(viewId) {
+      const def = CALCULATOR_DEFINITIONS[viewId];
+      if (!def) return;
+
+      const formulaEl = document.getElementById('eeat-formula-block');
+      const varsEl = document.getElementById('eeat-variables-list');
+      const stepsEl = document.getElementById('eeat-steps-list');
+      const faqEl = document.getElementById('eeat-faq-accordion');
+
+      if (formulaEl) formulaEl.textContent = def.formula;
+      if (varsEl) {
+        varsEl.innerHTML = def.variables.map(v => `<li class="leading-relaxed">• ${v}</li>`).join('');
+      }
+      if (stepsEl) {
+        stepsEl.innerHTML = def.steps.map(s => `<li class="leading-relaxed">${s}</li>`).join('');
+      }
+      if (faqEl) {
+        faqEl.innerHTML = def.faqs.map((item, idx) => `
+          <div class="border border-[#c5d4e3] rounded bg-[#f8fafc] overflow-hidden">
+            <button type="button" onclick="toggleFaqItem(${idx})" class="w-full text-left px-4 py-2.5 font-semibold text-xs sm:text-sm text-[#003366] flex items-center justify-between hover:bg-[#e8eef5] transition">
+              <span>Q${idx + 1}. ${item.q}</span>
+              <span id="faq-icon-${idx}" class="font-mono font-bold text-[#006622] ml-2">${idx === 0 ? '−' : '+'}</span>
+            </button>
+            <div id="faq-body-${idx}" class="${idx === 0 ? '' : 'hidden'} px-4 py-3 text-xs sm:text-sm text-slate-700 bg-white border-t border-[#c5d4e3] leading-relaxed">
+              ${item.a}
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function toggleFaqItem(idx) {
+      const body = document.getElementById('faq-body-' + idx);
+      const icon = document.getElementById('faq-icon-' + idx);
+      if (!body || !icon) return;
+      const isHidden = body.classList.contains('hidden');
+      if (isHidden) {
+        body.classList.remove('hidden');
+        icon.textContent = '−';
+      } else {
+        body.classList.add('hidden');
+        icon.textContent = '+';
+      }
+    }
+
+    function renderSidebarRelated(viewId) {
+      const def = CALCULATOR_DEFINITIONS[viewId];
+      const listEl = document.getElementById('sidebar-related-links');
+      if (!listEl || !def) return;
+
+      const siblings = ALL_CALCULATORS_INDEX.filter(c => c.id !== viewId);
+      const sameCat = siblings.filter(c => c.category === def.category);
+      const others = siblings.filter(c => c.category !== def.category).slice(0, 4);
+      const combined = [...sameCat, ...others];
+
+      listEl.innerHTML = combined.map(c => `
+        <li>
+          <button type="button" data-nav="${c.id}" onclick="navigateTo('${c.id}')" class="calc-link text-xs sm:text-sm">
+            › ${c.title}
+          </button>
+        </li>
+      `).join('');
+    }
+
+    function renderCalculatorTemplate(viewId) {
+      const mount = document.getElementById('calc-engine-mount');
+      if (!mount) return;
+      if (APP_STATE.activeChartInstance) {
+        APP_STATE.activeChartInstance.destroy();
+        APP_STATE.activeChartInstance = null;
+      }
+
+      const sym = getCurrencySymbol();
+
+      if (viewId === 'mortgage' || viewId === 'amortization') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3">
+                <span>Mortgage Parameters</span>
+                <span class="text-xs font-normal text-blue-200">PITI + Schedule</span>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Home Price (<span class="curr-sym">${sym}</span>)</label>
+                <input id="mort-price" type="number" value="400000" min="1000" step="1000" oninput="syncMortDownFromPct(); calcMortgage()" class="calc-input" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Down Payment (<span class="curr-sym">${sym}</span>)</label>
+                  <input id="mort-down-amt" type="number" value="80000" min="0" step="500" oninput="syncMortDownFromAmt(); calcMortgage()" class="calc-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Down Payment (%)</label>
+                  <input id="mort-down-pct" type="number" value="20" min="0" max="99" step="0.5" oninput="syncMortDownFromPct(); calcMortgage()" class="calc-input" />
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Loan Term (Years)</label>
+                  <select id="mort-term" onchange="calcMortgage()" class="calc-input">
+                    <option value="30" selected>30 Years Fixed</option>
+                    <option value="20">20 Years Fixed</option>
+                    <option value="15">15 Years Fixed</option>
+                    <option value="10">10 Years Fixed</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Interest Rate (%)</label>
+                  <input id="mort-rate" type="number" value="6.5" min="0.1" max="30" step="0.05" oninput="calcMortgage()" class="calc-input" />
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Property Tax (<span class="curr-sym">${sym}</span>/yr)</label>
+                  <input id="mort-tax" type="number" value="4800" min="0" step="100" oninput="calcMortgage()" class="calc-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Home Insurance (<span class="curr-sym">${sym}</span>/yr)</label>
+                  <input id="mort-ins" type="number" value="1500" min="0" step="50" oninput="calcMortgage()" class="calc-input" />
+                </div>
+              </div>
+              <div class="pt-2 flex items-center gap-2">
+                <button type="button" onclick="calcMortgage()" class="btn-calc-primary flex-1 justify-center">Calculate</button>
+                <button type="button" onclick="resetMortgage()" class="btn-calc-secondary">Clear</button>
+              </div>
+            </div>
+
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 flex flex-col justify-between">
+              <div>
+                <div class="calc-result-header -mx-4 -mt-4 mb-4">
+                  <span>Monthly Payment: <strong id="mort-total-monthly">$2,548.22</strong></span>
+                  <span class="text-xs font-normal">Exact Breakdown</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4 text-center">
+                  <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                    <div class="text-[11px] text-slate-500 font-semibold">Principal &amp; Interest</div>
+                    <div id="mort-pi-out" class="text-sm font-bold text-[#003366] mt-0.5">$2,022.62</div>
+                  </div>
+                  <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                    <div class="text-[11px] text-slate-500 font-semibold">Property Taxes</div>
+                    <div id="mort-tax-out" class="text-sm font-bold text-[#006622] mt-0.5">$400.00</div>
+                  </div>
+                  <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                    <div class="text-[11px] text-slate-500 font-semibold">Home Insurance</div>
+                    <div id="mort-ins-out" class="text-sm font-bold text-amber-700 mt-0.5">$125.00</div>
+                  </div>
+                  <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                    <div class="text-[11px] text-slate-500 font-semibold">Total Interest</div>
+                    <div id="mort-tot-int" class="text-sm font-bold text-rose-700 mt-0.5">$408,142.36</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                <div class="relative h-52 w-full">
+                  <canvas id="mort-donut-chart"></canvas>
+                </div>
+                <div class="text-xs space-y-2 bg-[#f4f7fb] p-3 rounded border border-[#d0dce8]">
+                  <div class="flex justify-between"><span>Loan Principal:</span><strong id="mort-loan-amt">$320,000.00</strong></div>
+                  <div class="flex justify-between"><span>Down Payment:</span><strong id="mort-down-summary">$80,000.00 (20%)</strong></div>
+                  <div class="flex justify-between"><span>Total of <span id="mort-months-lbl">360</span> P&amp;I Payments:</span><strong id="mort-total-pi">$728,142.36</strong></div>
+                  <div class="flex justify-between border-t border-slate-300 pt-1.5 text-[#003366]"><span>Total All-In Outlay:</span><strong id="mort-total-allin">$917,142.36</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 bg-white border border-[#c5d4e3] rounded overflow-hidden">
+            <div class="bg-[#e8eef5] px-4 py-2.5 border-b border-[#c5d4e3] flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-sm font-bold text-[#003366]">Interactive Amortization Schedule</h3>
+                <p class="text-[11px] text-slate-600">Showing first 24 monthly installments &amp; full exportable schedule (<span id="mort-row-count">360</span> months)</p>
+              </div>
+              <button type="button" onclick="exportAmortizationCSV()" class="bg-[#006622] hover:bg-[#004d1a] text-white text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5 shadow-sm">
+                <span>⬇ Export CSV</span>
+              </button>
+            </div>
+            <div class="max-h-72 overflow-y-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead class="bg-slate-100 text-slate-700 sticky top-0 border-b border-slate-300">
+                  <tr>
+                    <th class="py-2 px-3">Month</th>
+                    <th class="py-2 px-3 text-right">Payment (P&amp;I)</th>
+                    <th class="py-2 px-3 text-right">Principal</th>
+                    <th class="py-2 px-3 text-right">Interest</th>
+                    <th class="py-2 px-3 text-right">Tax &amp; Ins</th>
+                    <th class="py-2 px-3 text-right">Ending Balance</th>
+                  </tr>
+                </thead>
+                <tbody id="mort-amort-tbody" class="divide-y divide-slate-200 font-mono"></tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'loan') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3">
+                <span>Personal Loan Inputs</span>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Loan Balance (<span class="curr-sym">${sym}</span>)</label>
+                <input id="loan-balance" type="number" value="25000" min="100" step="500" oninput="calcLoan()" class="calc-input" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Interest Rate (% APR)</label>
+                <input id="loan-rate" type="number" value="8.5" min="0.1" max="50" step="0.1" oninput="calcLoan()" class="calc-input" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Loan Term (Months)</label>
+                <input id="loan-months" type="number" value="60" min="1" max="360" step="1" oninput="calcLoan()" class="calc-input" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Optional Extra Monthly Payment (<span class="curr-sym">${sym}</span>)</label>
+                <input id="loan-extra" type="number" value="100" min="0" step="25" oninput="calcLoan()" class="calc-input" />
+              </div>
+              <div class="pt-2 flex gap-2">
+                <button type="button" onclick="calcLoan()" class="btn-calc-primary flex-1 justify-center">Calculate</button>
+                <button type="button" onclick="document.getElementById('loan-extra').value='0'; calcLoan();" class="btn-calc-secondary">No Extra</button>
+              </div>
+            </div>
+
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 space-y-4">
+              <div class="calc-result-header -mx-4 -mt-4">
+                <span>Monthly Installment: <strong id="loan-monthly-out">$512.91</strong></span>
+                <span id="loan-payoff-badge" class="text-xs bg-white/20 px-2 py-0.5 rounded">Payoff: Oct 2030</span>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                  <div class="text-[11px] text-slate-500 font-semibold">Base Installment</div>
+                  <div id="loan-base-pmt" class="text-sm font-bold text-[#003366] mt-0.5">$512.91</div>
+                </div>
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                  <div class="text-[11px] text-slate-500 font-semibold">Total Interest Paid</div>
+                  <div id="loan-tot-int" class="text-sm font-bold text-rose-700 mt-0.5">$4,705.21</div>
+                </div>
+                <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded">
+                  <div class="text-[11px] text-emerald-800 font-semibold">Interest Saved</div>
+                  <div id="loan-int-saved" class="text-sm font-bold text-[#006622] mt-0.5">$1,069.55</div>
+                </div>
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded">
+                  <div class="text-[11px] text-blue-800 font-semibold">Estimated Payoff Date</div>
+                  <div id="loan-payoff-date" class="text-sm font-bold text-[#003366] mt-0.5">Sep 2030</div>
+                </div>
+              </div>
+              <div class="bg-[#f4f7fb] border border-[#d0dce8] rounded p-3.5 text-xs space-y-2">
+                <div class="flex justify-between"><span>Scheduled Term vs. Accelerated Payoff:</span><strong id="loan-term-compare">60 mos → 49 mos (11 mos saved)</strong></div>
+                <div class="flex justify-between"><span>Baseline Interest (Without Extra Payment):</span><strong id="loan-base-int">$5,774.76</strong></div>
+                <div class="flex justify-between"><span>Total Principal + Interest Paid:</span><strong id="loan-total-paid">$29,705.21</strong></div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'compound') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3">
+                <span>Compound Growth Inputs</span>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Initial Deposit (<span class="curr-sym">${sym}</span>)</label>
+                <input id="comp-initial" type="number" value="10000" min="0" step="500" oninput="calcCompound()" class="calc-input" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Regular Monthly Addition (<span class="curr-sym">${sym}</span>)</label>
+                <input id="comp-monthly" type="number" value="500" min="0" step="50" oninput="calcCompound()" class="calc-input" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Annual Return (%)</label>
+                  <input id="comp-rate" type="number" value="8" min="0" max="50" step="0.25" oninput="calcCompound()" class="calc-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Investment Years</label>
+                  <input id="comp-years" type="number" value="20" min="1" max="60" step="1" oninput="calcCompound()" class="calc-input" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Compounding Frequency</label>
+                <select id="comp-freq" onchange="calcCompound()" class="calc-input">
+                  <option value="12" selected>Monthly (12/yr)</option>
+                  <option value="365">Daily (365/yr)</option>
+                  <option value="4">Quarterly (4/yr)</option>
+                  <option value="2">Semi-Annually (2/yr)</option>
+                  <option value="1">Annually (1/yr)</option>
+                </select>
+              </div>
+              <div class="pt-2">
+                <button type="button" onclick="calcCompound()" class="btn-calc-primary w-full justify-center">Calculate Growth</button>
+              </div>
+            </div>
+
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 flex flex-col justify-between">
+              <div>
+                <div class="calc-result-header -mx-4 -mt-4 mb-4">
+                  <span>Future Balance: <strong id="comp-fv-out">$343,660.15</strong></span>
+                  <span class="text-xs font-normal">Compound Trajectory</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2.5 mb-4 text-center">
+                  <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                    <div class="text-[11px] text-slate-500 font-semibold">Total Future Balance</div>
+                    <div id="comp-fv-card" class="text-sm font-bold text-[#003366] mt-0.5">$343,660.15</div>
+                  </div>
+                  <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                    <div class="text-[11px] text-slate-500 font-semibold">Total Principal Invested</div>
+                    <div id="comp-prin-card" class="text-sm font-bold text-slate-700 mt-0.5">$130,000.00</div>
+                  </div>
+                  <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded">
+                    <div class="text-[11px] text-emerald-800 font-semibold">Total Interest Earned</div>
+                    <div id="comp-int-card" class="text-sm font-bold text-[#006622] mt-0.5">$213,660.15</div>
+                  </div>
+                </div>
+              </div>
+              <div class="relative h-56 w-full">
+                <canvas id="comp-line-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'autoloan') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3">
+                <span>Auto Loan Parameters</span>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Vehicle Price (<span class="curr-sym">${sym}</span>)</label>
+                <input id="auto-price" type="number" value="35000" min="500" step="500" oninput="calcAutoLoan()" class="calc-input" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Down Payment (<span class="curr-sym">${sym}</span>)</label>
+                  <input id="auto-down" type="number" value="5000" min="0" step="250" oninput="calcAutoLoan()" class="calc-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Trade-in Value (<span class="curr-sym">${sym}</span>)</label>
+                  <input id="auto-trade" type="number" value="4000" min="0" step="250" oninput="calcAutoLoan()" class="calc-input" />
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Rate (%)</label>
+                  <input id="auto-rate" type="number" value="5.9" min="0" max="35" step="0.1" oninput="calcAutoLoan()" class="calc-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Term (Mos)</label>
+                  <select id="auto-term" onchange="calcAutoLoan()" class="calc-input">
+                    <option value="36">36 Mos</option>
+                    <option value="48">48 Mos</option>
+                    <option value="60" selected>60 Mos</option>
+                    <option value="72">72 Mos</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Sales Tax (%)</label>
+                  <input id="auto-tax" type="number" value="7.0" min="0" max="25" step="0.25" oninput="calcAutoLoan()" class="calc-input" />
+                </div>
+              </div>
+              <div class="pt-2">
+                <button type="button" onclick="calcAutoLoan()" class="btn-calc-primary w-full justify-center">Calculate Auto Payment</button>
+              </div>
+            </div>
+
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 space-y-4">
+              <div class="calc-result-header -mx-4 -mt-4">
+                <span>Monthly Payment: <strong id="auto-monthly-out">$544.50</strong></span>
+                <span class="text-xs font-normal">Auto Finance Summary</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2.5 text-center">
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                  <div class="text-[11px] text-slate-500 font-semibold">Net Financed Loan</div>
+                  <div id="auto-loan-amt" class="text-sm font-bold text-[#003366] mt-0.5">$28,170.00</div>
+                </div>
+                <div class="p-2.5 bg-amber-50 border border-amber-200 rounded">
+                  <div class="text-[11px] text-amber-800 font-semibold">Sales Tax Breakdown</div>
+                  <div id="auto-tax-amt" class="text-sm font-bold text-amber-800 mt-0.5">$2,170.00</div>
+                </div>
+                <div class="p-2.5 bg-rose-50 border border-rose-200 rounded">
+                  <div class="text-[11px] text-rose-800 font-semibold">Total Loan Cost (P+I)</div>
+                  <div id="auto-total-loan-cost" class="text-sm font-bold text-rose-700 mt-0.5">$32,670.11</div>
+                </div>
+              </div>
+              <div class="bg-[#f4f7fb] border border-[#d0dce8] rounded p-3.5 text-xs space-y-2">
+                <div class="flex justify-between"><span>Total Interest Over Loan Term:</span><strong id="auto-tot-int">$4,500.11</strong></div>
+                <div class="flex justify-between"><span>Taxable Amount (Vehicle Price − Trade-In):</span><strong id="auto-taxable-amt">$31,000.00</strong></div>
+                <div class="flex justify-between border-t border-slate-300 pt-1.5 text-[#003366]"><span>Total Out-of-Pocket Vehicle Cost (Incl. Down &amp; Trade):</span><strong id="auto-allin-cost">$41,670.11</strong></div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'bmi') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3">
+                <span>Body Measurements</span>
+              </div>
+              <div class="flex rounded overflow-hidden border border-[#2e5b88]">
+                <button type="button" id="bmi-tab-metric" onclick="setBmiUnit('metric')" class="flex-1 py-1.5 text-xs font-bold bg-[#003366] text-white">Metric (cm / kg)</button>
+                <button type="button" id="bmi-tab-imperial" onclick="setBmiUnit('imperial')" class="flex-1 py-1.5 text-xs font-bold bg-white text-[#003366]">Imperial (ft / in / lbs)</button>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Age (2 - 120)</label>
+                  <input id="bmi-age" type="number" value="30" min="2" max="120" oninput="calcBMI()" class="calc-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Gender</label>
+                  <select id="bmi-gender" onchange="calcBMI()" class="calc-input">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="bmi-metric-fields" class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Height (cm)</label>
+                  <input id="bmi-cm" type="number" value="175" min="50" max="260" step="0.5" oninput="calcBMI()" class="calc-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Weight (kg)</label>
+                  <input id="bmi-kg" type="number" value="70" min="15" max="350" step="0.5" oninput="calcBMI()" class="calc-input" />
+                </div>
+              </div>
+
+              <div id="bmi-imperial-fields" class="hidden space-y-2">
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Height (Feet)</label>
+                    <input id="bmi-ft" type="number" value="5" min="2" max="8" oninput="calcBMI()" class="calc-input" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Height (Inches)</label>
+                    <input id="bmi-in" type="number" value="9" min="0" max="11" step="0.5" oninput="calcBMI()" class="calc-input" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Weight (lbs)</label>
+                  <input id="bmi-lbs" type="number" value="154" min="30" max="750" step="1" oninput="calcBMI()" class="calc-input" />
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <button type="button" onclick="calcBMI()" class="btn-calc-primary w-full justify-center">Calculate BMI</button>
+              </div>
+            </div>
+
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 space-y-4">
+              <div class="calc-result-header -mx-4 -mt-4">
+                <span>BMI Score: <strong id="bmi-score-out">22.9 kg/m²</strong></span>
+                <span id="bmi-who-badge" class="px-2.5 py-0.5 rounded text-xs font-extrabold bg-emerald-100 text-emerald-900">Normal</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2.5 text-center">
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                  <div class="text-[11px] text-slate-500 font-semibold">WHO Classification</div>
+                  <div id="bmi-cat-card" class="text-sm font-bold text-[#006622] mt-0.5">Normal</div>
+                </div>
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                  <div class="text-[11px] text-slate-500 font-semibold">Healthy Weight Range</div>
+                  <div id="bmi-healthy-range" class="text-sm font-bold text-[#003366] mt-0.5">56.7 - 76.3 kg</div>
+                </div>
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                  <div class="text-[11px] text-slate-500 font-semibold">BMI Prime Ratio</div>
+                  <div id="bmi-prime-out" class="text-sm font-bold text-slate-800 mt-0.5">0.91</div>
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                <div class="flex justify-between text-[11px] font-semibold text-slate-600">
+                  <span>Underweight (&lt;18.5)</span>
+                  <span>Normal (18.5–24.9)</span>
+                  <span>Overweight (25–29.9)</span>
+                  <span>Obese (≥30)</span>
+                </div>
+                <div class="w-full h-3.5 rounded-full overflow-hidden flex border border-slate-300">
+                  <div class="w-1/4 bg-sky-400"></div>
+                  <div class="w-1/4 bg-emerald-500"></div>
+                  <div class="w-1/4 bg-amber-400"></div>
+                  <div class="w-1/4 bg-rose-500"></div>
+                </div>
+                <p id="bmi-guidance-note" class="text-xs text-slate-700 bg-[#f4f7fb] p-2.5 rounded border border-[#d0dce8]"></p>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'calorie') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3">
+                <span>Daily Calorie &amp; TDEE Inputs</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Gender</label>
+                  <select id="cal-gender" onchange="calcCalorie()" class="calc-input">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Age (Years)</label>
+                  <input id="cal-age" type="number" value="30" min="15" max="100" oninput="calcCalorie()" class="calc-input" />
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Height (cm)</label>
+                  <input id="cal-cm" type="number" value="175" min="100" max="250" oninput="calcCalorie()" class="calc-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Weight (kg)</label>
+                  <input id="cal-kg" type="number" value="72" min="30" max="300" oninput="calcCalorie()" class="calc-input" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Activity Level</label>
+                <select id="cal-activity" onchange="calcCalorie()" class="calc-input">
+                  <option value="1.2">Sedentary (office job, little or no exercise)</option>
+                  <option value="1.375">Lightly Active (light exercise 1–3 days/week)</option>
+                  <option value="1.55" selected>Moderately Active (moderate exercise 3–5 days/week)</option>
+                  <option value="1.725">Very Active (hard exercise 6–7 days/week)</option>
+                  <option value="1.9">Extra Active (very intense daily training or physical job)</option>
+                </select>
+              </div>
+              <div class="pt-2">
+                <button type="button" onclick="calcCalorie()" class="btn-calc-primary w-full justify-center">Calculate Daily Calories</button>
+              </div>
+            </div>
+
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 space-y-4">
+              <div class="calc-result-header -mx-4 -mt-4">
+                <span>Maintenance (TDEE): <strong id="cal-tdee-out">2,586 kcal/day</strong></span>
+                <span class="text-xs font-normal">Mifflin-St Jeor</span>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                  <div class="text-[11px] text-slate-500 font-semibold">Basal Metabolic Rate</div>
+                  <div id="cal-bmr-out" class="text-sm font-bold text-[#003366] mt-0.5">1,669 kcal</div>
+                </div>
+                <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded">
+                  <div class="text-[11px] text-emerald-800 font-semibold">Maintenance (TDEE)</div>
+                  <div id="cal-maint-card" class="text-sm font-bold text-[#006622] mt-0.5">2,586 kcal</div>
+                </div>
+                <div class="p-2.5 bg-amber-50 border border-amber-200 rounded">
+                  <div class="text-[11px] text-amber-800 font-semibold">Fat Loss (-500 kcal)</div>
+                  <div id="cal-loss-out" class="text-sm font-bold text-amber-800 mt-0.5">2,086 kcal</div>
+                </div>
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded">
+                  <div class="text-[11px] text-blue-800 font-semibold">Muscle Gain (+300 kcal)</div>
+                  <div id="cal-gain-out" class="text-sm font-bold text-[#003366] mt-0.5">2,886 kcal</div>
+                </div>
+              </div>
+              <div class="bg-[#f4f7fb] border border-[#d0dce8] rounded p-3.5 text-xs space-y-2">
+                <div class="font-bold text-[#003366]">Balanced Daily Macronutrient Reference (at Maintenance TDEE):</div>
+                <div class="grid grid-cols-3 gap-2 text-center pt-1">
+                  <div class="bg-white p-2 rounded border border-slate-200">Protein (30%): <strong id="cal-macro-p">194g</strong></div>
+                  <div class="bg-white p-2 rounded border border-slate-200">Carbs (40%): <strong id="cal-macro-c">259g</strong></div>
+                  <div class="bg-white p-2 rounded border border-slate-200">Fats (30%): <strong id="cal-macro-f">86g</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'percentage') {
+        mount.innerHTML = `
+          <div class="space-y-4">
+            <div class="calc-panel p-4">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-2 text-sm font-bold text-[#003366]">
+                  <span class="bg-[#003366] text-white text-xs px-2 py-0.5 rounded">1</span>
+                  <span>What is</span>
+                  <input id="pct1-x" type="number" value="15" step="any" oninput="calcPercentage()" class="calc-input w-24 text-center font-mono" />
+                  <span>% of</span>
+                  <input id="pct1-y" type="number" value="240" step="any" oninput="calcPercentage()" class="calc-input w-28 text-center font-mono" />
+                  <span>?</span>
+                </div>
+                <div class="flex items-center gap-3 bg-white px-4 py-2 rounded border border-[#9ab0c7]">
+                  <span class="text-xs text-slate-500">Result:</span>
+                  <strong id="pct1-res" class="text-lg font-mono text-[#006622]">36</strong>
+                  <span id="pct1-eq" class="text-xs font-mono text-slate-500">(0.15 × 240 = 36)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="calc-panel p-4">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-2 text-sm font-bold text-[#003366]">
+                  <span class="bg-[#003366] text-white text-xs px-2 py-0.5 rounded">2</span>
+                  <input id="pct2-x" type="number" value="45" step="any" oninput="calcPercentage()" class="calc-input w-24 text-center font-mono" />
+                  <span>is what percent of</span>
+                  <input id="pct2-y" type="number" value="180" step="any" oninput="calcPercentage()" class="calc-input w-28 text-center font-mono" />
+                  <span>?</span>
+                </div>
+                <div class="flex items-center gap-3 bg-white px-4 py-2 rounded border border-[#9ab0c7]">
+                  <span class="text-xs text-slate-500">Result:</span>
+                  <strong id="pct2-res" class="text-lg font-mono text-[#006622]">25%</strong>
+                  <span id="pct2-eq" class="text-xs font-mono text-slate-500">(45 / 180 × 100 = 25%)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="calc-panel p-4">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-2 text-sm font-bold text-[#003366]">
+                  <span class="bg-[#003366] text-white text-xs px-2 py-0.5 rounded">3</span>
+                  <span>Percentage change from</span>
+                  <input id="pct3-x" type="number" value="80" step="any" oninput="calcPercentage()" class="calc-input w-24 text-center font-mono" />
+                  <span>to</span>
+                  <input id="pct3-y" type="number" value="100" step="any" oninput="calcPercentage()" class="calc-input w-28 text-center font-mono" />
+                </div>
+                <div class="flex items-center gap-3 bg-white px-4 py-2 rounded border border-[#9ab0c7]">
+                  <span class="text-xs text-slate-500">Result:</span>
+                  <strong id="pct3-res" class="text-lg font-mono text-[#006622]">+25% Increase</strong>
+                  <span id="pct3-eq" class="text-xs font-mono text-slate-500">((100 - 80) / 80 = +25%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'age') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3">
+                <span>Chronological Age Inputs</span>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Date of Birth</label>
+                <input id="age-dob" type="date" value="1995-05-15" onchange="calcAge()" class="calc-input" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Age at the Date of (Target Date)</label>
+                <input id="age-target" type="date" value="2026-11-05" onchange="calcAge()" class="calc-input" />
+              </div>
+              <div class="pt-2">
+                <button type="button" onclick="calcAge()" class="btn-calc-primary w-full justify-center">Calculate Exact Age</button>
+              </div>
+            </div>
+
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 space-y-4">
+              <div class="calc-result-header -mx-4 -mt-4">
+                <span>Exact Age: <strong id="age-exact-out">31 Years, 5 Months, 21 Days</strong></span>
+              </div>
+              <div class="grid grid-cols-3 gap-2.5 text-center">
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                  <div class="text-[11px] text-slate-500 font-semibold">Total Days Lived</div>
+                  <div id="age-days-lived" class="text-sm font-bold text-[#003366] mt-0.5">11,497 Days</div>
+                </div>
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                  <div class="text-[11px] text-slate-500 font-semibold">Day of Week Born</div>
+                  <div id="age-dow-born" class="text-sm font-bold text-[#006622] mt-0.5">Monday</div>
+                </div>
+                <div class="p-2.5 bg-amber-50 border border-amber-200 rounded">
+                  <div class="text-[11px] text-amber-800 font-semibold">Next Birthday In</div>
+                  <div id="age-next-bday" class="text-sm font-bold text-amber-800 mt-0.5">191 Days</div>
+                </div>
+              </div>
+              <div class="bg-[#f4f7fb] border border-[#d0dce8] rounded p-3.5 text-xs space-y-1.5 font-mono">
+                <div class="flex justify-between"><span>Total Months Elapsed:</span><strong id="age-total-months">377 Months, 21 Days</strong></div>
+                <div class="flex justify-between"><span>Total Weeks Elapsed:</span><strong id="age-total-weeks">1,642 Weeks, 3 Days</strong></div>
+                <div class="flex justify-between"><span>Total Hours Elapsed:</span><strong id="age-total-hours">275,928 Hours</strong></div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'bodyfat') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3"><span>U.S. Navy Body Fat Inputs</span></div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Gender</label>
+                  <select id="bf-gender" onchange="calcBodyFat()" class="calc-input">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Weight (kg)</label>
+                  <input id="bf-weight" type="number" value="78" min="30" max="250" oninput="calcBodyFat()" class="calc-input" />
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Height (cm)</label>
+                  <input id="bf-height" type="number" value="178" min="100" max="240" oninput="calcBodyFat()" class="calc-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Neck (cm)</label>
+                  <input id="bf-neck" type="number" value="38" min="20" max="70" oninput="calcBodyFat()" class="calc-input" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Waist (cm)</label>
+                  <input id="bf-waist" type="number" value="85" min="45" max="180" oninput="calcBodyFat()" class="calc-input" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Hip (cm — used for Female equation)</label>
+                <input id="bf-hip" type="number" value="96" min="50" max="180" oninput="calcBodyFat()" class="calc-input" />
+              </div>
+              <button type="button" onclick="calcBodyFat()" class="btn-calc-primary w-full justify-center">Calculate Body Fat</button>
+            </div>
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 space-y-4">
+              <div class="calc-result-header -mx-4 -mt-4">
+                <span>Body Fat: <strong id="bf-pct-out">16.5%</strong></span>
+                <span id="bf-cat-out" class="text-xs bg-white/20 px-2 py-0.5 rounded">Fitness</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2.5 text-center">
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded"><div class="text-[11px] text-slate-500">Body Fat %</div><div id="bf-card-pct" class="text-sm font-bold text-[#003366]">16.5%</div></div>
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded"><div class="text-[11px] text-slate-500">Fat Mass</div><div id="bf-card-fat" class="text-sm font-bold text-rose-700">12.9 kg</div></div>
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded"><div class="text-[11px] text-slate-500">Lean Body Mass</div><div id="bf-card-lean" class="text-sm font-bold text-[#006622]">65.1 kg</div></div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'bmr') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3"><span>BMR Parameters</span></div>
+              <div class="grid grid-cols-2 gap-2">
+                <div><label class="block text-xs font-bold mb-1">Gender</label><select id="bmr-gender" onchange="calcBMROnly()" class="calc-input"><option value="male">Male</option><option value="female">Female</option></select></div>
+                <div><label class="block text-xs font-bold mb-1">Age</label><input id="bmr-age" type="number" value="28" oninput="calcBMROnly()" class="calc-input" /></div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div><label class="block text-xs font-bold mb-1">Height (cm)</label><input id="bmr-cm" type="number" value="175" oninput="calcBMROnly()" class="calc-input" /></div>
+                <div><label class="block text-xs font-bold mb-1">Weight (kg)</label><input id="bmr-kg" type="number" value="70" oninput="calcBMROnly()" class="calc-input" /></div>
+              </div>
+              <button type="button" onclick="calcBMROnly()" class="btn-calc-primary w-full justify-center">Calculate BMR</button>
+            </div>
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 space-y-3">
+              <div class="calc-result-header -mx-4 -mt-4"><span>Resting BMR: <strong id="bmr-main-out">1,659 kcal/day</strong></span></div>
+              <div id="bmr-table-out" class="text-xs space-y-1.5 bg-[#f4f7fb] p-3 rounded border border-[#d0dce8]"></div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'idealweight') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3"><span>Ideal Weight Inputs</span></div>
+              <div class="grid grid-cols-2 gap-2">
+                <div><label class="block text-xs font-bold mb-1">Gender</label><select id="iw-gender" onchange="calcIdealWeight()" class="calc-input"><option value="male">Male</option><option value="female">Female</option></select></div>
+                <div><label class="block text-xs font-bold mb-1">Height (cm)</label><input id="iw-cm" type="number" value="175" oninput="calcIdealWeight()" class="calc-input" /></div>
+              </div>
+              <button type="button" onclick="calcIdealWeight()" class="btn-calc-primary w-full justify-center">Calculate Ideal Weight</button>
+            </div>
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 space-y-3">
+              <div class="calc-result-header -mx-4 -mt-4"><span>Devine Ideal Weight: <strong id="iw-main-out">70.5 kg (155.4 lbs)</strong></span></div>
+              <div id="iw-formulas-out" class="text-xs space-y-2 bg-[#f4f7fb] p-3 rounded border border-[#d0dce8]"></div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'scientific') {
+        mount.innerHTML = `
+          <div class="bg-[#f4f7fb] border border-[#c5d4e3] rounded p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-bold text-[#003366]">Live Scientific Keypad Mirror &amp; Quick Bench</span>
+              <span class="text-xs text-slate-600">Synced with the 5×10 Hero Scientific Calculator above</span>
+            </div>
+            <div class="bg-[#2b547e] text-white p-3 rounded font-mono text-right text-xl font-bold" id="sci-page-mirror-display">${APP_STATE.sci.display}</div>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <button type="button" onclick="sciConstant('pi'); sciAction('sin');" class="px-3 py-1.5 bg-white border border-slate-300 rounded font-semibold hover:bg-slate-50">Demo: sin(π)</button>
+              <button type="button" onclick="sciClear(); sciDigit('5'); sciAction('fact');" class="px-3 py-1.5 bg-white border border-slate-300 rounded font-semibold hover:bg-slate-50">Demo: 5! = 120</button>
+              <button type="button" onclick="sciClear(); sciDigit('2'); sciOperator('^'); sciDigit('1'); sciDigit('0'); sciEquals();" class="px-3 py-1.5 bg-white border border-slate-300 rounded font-semibold hover:bg-slate-50">Demo: 2¹⁰ = 1024</button>
+              <button type="button" onclick="sciClear()" class="px-3 py-1.5 bg-rose-100 text-rose-800 border border-rose-300 rounded font-semibold">Reset AC</button>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'fraction') {
+        mount.innerHTML = `
+          <div class="calc-panel p-4 space-y-4">
+            <div class="calc-panel-header -mx-4 -mt-4 mb-2"><span>Fraction Arithmetic Solver</span></div>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <div class="flex flex-col items-center gap-1">
+                <input id="frac-n1" type="number" value="3" oninput="calcFraction()" class="calc-input w-20 text-center font-mono" />
+                <div class="w-20 h-0.5 bg-slate-800"></div>
+                <input id="frac-d1" type="number" value="4" oninput="calcFraction()" class="calc-input w-20 text-center font-mono" />
+              </div>
+              <select id="frac-op" onchange="calcFraction()" class="calc-input w-20 text-center font-bold text-lg">
+                <option value="+">+</option>
+                <option value="-">−</option>
+                <option value="*">×</option>
+                <option value="/">÷</option>
+              </select>
+              <div class="flex flex-col items-center gap-1">
+                <input id="frac-n2" type="number" value="2" oninput="calcFraction()" class="calc-input w-20 text-center font-mono" />
+                <div class="w-20 h-0.5 bg-slate-800"></div>
+                <input id="frac-d2" type="number" value="5" oninput="calcFraction()" class="calc-input w-20 text-center font-mono" />
+              </div>
+              <span class="text-xl font-bold">=</span>
+              <div class="bg-white border border-[#9ab0c7] rounded px-5 py-3 text-center">
+                <div id="frac-res-main" class="text-lg font-bold font-mono text-[#006622]">23 / 20</div>
+                <div id="frac-res-sub" class="text-xs text-slate-600 font-mono">Mixed: 1 3/20 | Decimal: 1.15</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'random') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3"><span>Random Number Generator</span></div>
+              <div class="grid grid-cols-2 gap-2">
+                <div><label class="block text-xs font-bold mb-1">Lower Limit (Min)</label><input id="rng-min" type="number" value="1" class="calc-input" /></div>
+                <div><label class="block text-xs font-bold mb-1">Upper Limit (Max)</label><input id="rng-max" type="number" value="100" class="calc-input" /></div>
+              </div>
+              <div><label class="block text-xs font-bold mb-1">How Many Numbers to Draw</label><input id="rng-count" type="number" value="5" min="1" max="50" class="calc-input" /></div>
+              <button type="button" onclick="calcRandom()" class="btn-calc-primary w-full justify-center">Generate Random Numbers</button>
+            </div>
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 space-y-3">
+              <div class="calc-result-header -mx-4 -mt-4"><span>Generated Sample</span></div>
+              <div id="rng-output-chips" class="flex flex-wrap gap-2 py-2"></div>
+              <div id="rng-stats-line" class="text-xs text-slate-600 font-mono bg-[#f4f7fb] p-2.5 rounded border border-[#d0dce8]"></div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'date') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-5 calc-panel p-4 space-y-3">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-3"><span>Days Between Two Dates</span></div>
+              <div><label class="block text-xs font-bold mb-1">Start Date</label><input id="date-start" type="date" value="2026-01-01" onchange="calcDateDiff()" class="calc-input" /></div>
+              <div><label class="block text-xs font-bold mb-1">End Date</label><input id="date-end" type="date" value="2026-11-05" onchange="calcDateDiff()" class="calc-input" /></div>
+              <button type="button" onclick="calcDateDiff()" class="btn-calc-primary w-full justify-center">Calculate Duration</button>
+            </div>
+            <div class="md:col-span-7 bg-white border border-[#c5d4e3] rounded p-4 space-y-3">
+              <div class="calc-result-header -mx-4 -mt-4"><span>Total Duration: <strong id="date-diff-main">308 Calendar Days</strong></span></div>
+              <div id="date-diff-details" class="text-xs space-y-1.5 bg-[#f4f7fb] p-3 rounded border border-[#d0dce8] font-mono"></div>
+            </div>
+          </div>
+        `;
+      } else if (viewId === 'time') {
+        mount.innerHTML = `
+          <div class="calc-panel p-4 space-y-3">
+            <div class="calc-panel-header -mx-4 -mt-4 mb-2"><span>Time Duration Calculator (Add / Subtract)</span></div>
+            <div class="grid grid-cols-4 gap-2 text-center text-xs font-bold text-slate-600">
+              <div>Days</div><div>Hours</div><div>Minutes</div><div>Seconds</div>
+            </div>
+            <div class="grid grid-cols-4 gap-2">
+              <input id="t1-d" type="number" value="1" min="0" oninput="calcTime()" class="calc-input text-center" />
+              <input id="t1-h" type="number" value="8" min="0" oninput="calcTime()" class="calc-input text-center" />
+              <input id="t1-m" type="number" value="45" min="0" oninput="calcTime()" class="calc-input text-center" />
+              <input id="t1-s" type="number" value="30" min="0" oninput="calcTime()" class="calc-input text-center" />
+            </div>
+            <div class="flex justify-center">
+              <select id="time-op" onchange="calcTime()" class="calc-input w-36 text-center font-bold">
+                <option value="+">+ Add Time</option>
+                <option value="-">− Subtract Time</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-4 gap-2">
+              <input id="t2-d" type="number" value="0" min="0" oninput="calcTime()" class="calc-input text-center" />
+              <input id="t2-h" type="number" value="5" min="0" oninput="calcTime()" class="calc-input text-center" />
+              <input id="t2-m" type="number" value="30" min="0" oninput="calcTime()" class="calc-input text-center" />
+              <input id="t2-s" type="number" value="45" min="0" oninput="calcTime()" class="calc-input text-center" />
+            </div>
+            <div id="time-result-banner" class="bg-white border border-[#9ab0c7] rounded p-3 text-center font-mono font-bold text-[#006622] text-sm"></div>
+          </div>
+        `;
+      } else if (viewId === 'gpa') {
+        mount.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div class="md:col-span-7 calc-panel p-4 space-y-2.5">
+              <div class="calc-panel-header -mx-4 -mt-4 mb-2"><span>Semester Courses &amp; Credits</span></div>
+              <div class="space-y-2" id="gpa-rows">
+                ${[
+                  { name: 'Calculus I', cr: 4, gr: '4.0' },
+                  { name: 'Financial Economics', cr: 3, gr: '3.7' },
+                  { name: 'Computer Science', cr: 4, gr: '4.0' },
+                  { name: 'Academic Writing', cr: 3, gr: '3.3' }
+                ].map((c, i) => `
+                  <div class="grid grid-cols-12 gap-2 items-center">
+                    <input type="text" value="${c.name}" class="calc-input col-span-6 text-xs" />
+                    <input id="gpa-cr-${i}" type="number" value="${c.cr}" min="1" max="6" oninput="calcGPA()" class="calc-input col-span-3 text-center text-xs" />
+                    <select id="gpa-gr-${i}" onchange="calcGPA()" class="calc-input col-span-3 text-xs font-bold">
+                      <option value="4.0" ${c.gr==='4.0'?'selected':''}>A (4.0)</option>
+                      <option value="3.7" ${c.gr==='3.7'?'selected':''}>A- (3.7)</option>
+                      <option value="3.3" ${c.gr==='3.3'?'selected':''}>B+ (3.3)</option>
+                      <option value="3.0">B (3.0)</option>
+                      <option value="2.7">B- (2.7)</option>
+                      <option value="2.3">C+ (2.3)</option>
+                      <option value="2.0">C (2.0)</option>
+                    </select>
+                  </div>
+                `).join('')}
+              </div>
+              <button type="button" onclick="calcGPA()" class="btn-calc-primary w-full justify-center mt-2">Calculate GPA</button>
+            </div>
+            <div class="md:col-span-5 bg-white border border-[#c5d4e3] rounded p-4 space-y-3">
+              <div class="calc-result-header -mx-4 -mt-4"><span>Cumulative GPA: <strong id="gpa-out-score">3.79</strong></span></div>
+              <div id="gpa-summary-box" class="text-xs space-y-1.5 bg-[#f4f7fb] p-3 rounded border border-[#d0dce8] font-mono"></div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function runActiveCalculator() {
+      const v = APP_STATE.currentView;
+      if (v === 'mortgage' || v === 'amortization') calcMortgage();
+      else if (v === 'loan') calcLoan();
+      else if (v === 'compound') calcCompound();
+      else if (v === 'autoloan') calcAutoLoan();
+      else if (v === 'bmi') calcBMI();
+      else if (v === 'calorie') calcCalorie();
+      else if (v === 'percentage') calcPercentage();
+      else if (v === 'age') calcAge();
+      else if (v === 'bodyfat') calcBodyFat();
+      else if (v === 'bmr') calcBMROnly();
+      else if (v === 'idealweight') calcIdealWeight();
+      else if (v === 'fraction') calcFraction();
+      else if (v === 'random') calcRandom();
+      else if (v === 'date') calcDateDiff();
+      else if (v === 'time') calcTime();
+      else if (v === 'gpa') calcGPA();
+    }
+
+    function syncMortDownFromPct() {
+      const price = parseFloat(document.getElementById('mort-price')?.value) || 0;
+      const pct = parseFloat(document.getElementById('mort-down-pct')?.value) || 0;
+      const amtEl = document.getElementById('mort-down-amt');
+      if (amtEl) amtEl.value = Math.round((price * pct) / 100);
+    }
+
+    function syncMortDownFromAmt() {
+      const price = parseFloat(document.getElementById('mort-price')?.value) || 1;
+      const amt = parseFloat(document.getElementById('mort-down-amt')?.value) || 0;
+      const pctEl = document.getElementById('mort-down-pct');
+      if (pctEl) pctEl.value = Number(((amt / price) * 100).toFixed(2));
+    }
+
+    function resetMortgage() {
+      document.getElementById('mort-price').value = '400000';
+      document.getElementById('mort-down-amt').value = '80000';
+      document.getElementById('mort-down-pct').value = '20';
+      document.getElementById('mort-term').value = '30';
+      document.getElementById('mort-rate').value = '6.5';
+      document.getElementById('mort-tax').value = '4800';
+      document.getElementById('mort-ins').value = '1500';
+      calcMortgage();
+    }
+
+    function calcMortgage() {
+      const homePrice = Math.max(0, parseFloat(document.getElementById('mort-price')?.value) || 0);
+      const downAmt = Math.max(0, parseFloat(document.getElementById('mort-down-amt')?.value) || 0);
+      const downPct = homePrice > 0 ? (downAmt / homePrice) * 100 : 0;
+      const termYears = parseInt(document.getElementById('mort-term')?.value || '30', 10);
+      const annualRate = Math.max(0, parseFloat(document.getElementById('mort-rate')?.value) || 0);
+      const annualTax = Math.max(0, parseFloat(document.getElementById('mort-tax')?.value) || 0);
+      const annualIns = Math.max(0, parseFloat(document.getElementById('mort-ins')?.value) || 0);
+
+      const principal = Math.max(0, homePrice - downAmt);
+      const n = termYears * 12;
+      const r = annualRate / 100 / 12;
+
+      let monthlyPI = 0;
+      if (n > 0) {
+        if (r === 0) {
+          monthlyPI = principal / n;
+        } else {
+          const factor = Math.pow(1 + r, n);
+          monthlyPI = principal * ((r * factor) / (factor - 1));
+        }
+      }
+
+      const monthlyTax = annualTax / 12;
+      const monthlyIns = annualIns / 12;
+      const totalMonthly = monthlyPI + monthlyTax + monthlyIns;
+      const totalPI = monthlyPI * n;
+      const totalInterest = Math.max(0, totalPI - principal);
+      const totalAllIn = totalPI + (monthlyTax + monthlyIns) * n + downAmt;
+
+      document.getElementById('mort-total-monthly').textContent = fmtMoney(totalMonthly);
+      document.getElementById('mort-pi-out').textContent = fmtMoney(monthlyPI);
+      document.getElementById('mort-tax-out').textContent = fmtMoney(monthlyTax);
+      document.getElementById('mort-ins-out').textContent = fmtMoney(monthlyIns);
+      document.getElementById('mort-tot-int').textContent = fmtMoney(totalInterest);
+      document.getElementById('mort-loan-amt').textContent = fmtMoney(principal);
+      document.getElementById('mort-down-summary').textContent = `${fmtMoney(downAmt)} (${downPct.toFixed(1)}%)`;
+      document.getElementById('mort-months-lbl').textContent = String(n);
+      document.getElementById('mort-total-pi').textContent = fmtMoney(totalPI);
+      document.getElementById('mort-total-allin').textContent = fmtMoney(totalAllIn);
+      document.getElementById('mort-row-count').textContent = String(n);
+
+      let balance = principal;
+      const rows = [];
+      for (let m = 1; m <= n; m++) {
+        const interestM = balance * r;
+        let principalM = monthlyPI - interestM;
+        if (m === n || principalM > balance) {
+          principalM = balance;
+        }
+        balance = Math.max(0, balance - principalM);
+        rows.push({
+          month: m,
+          payment: principalM + interestM,
+          principal: principalM,
+          interest: interestM,
+          escrow: monthlyTax + monthlyIns,
+          balance: balance
+        });
+      }
+      APP_STATE.lastAmortizationRows = rows;
+
+      const tbody = document.getElementById('mort-amort-tbody');
+      if (tbody) {
+        tbody.innerHTML = rows.map(row => `
+          <tr class="hover:bg-blue-50/50">
+            <td class="py-1.5 px-3 font-semibold text-slate-700">#${row.month}</td>
+            <td class="py-1.5 px-3 text-right">${fmtMoney(row.payment)}</td>
+            <td class="py-1.5 px-3 text-right text-[#006622]">${fmtMoney(row.principal)}</td>
+            <td class="py-1.5 px-3 text-right text-rose-700">${fmtMoney(row.interest)}</td>
+            <td class="py-1.5 px-3 text-right text-slate-600">${fmtMoney(row.escrow)}</td>
+            <td class="py-1.5 px-3 text-right font-semibold text-[#003366]">${fmtMoney(row.balance)}</td>
+          </tr>
+        `).join('');
+      }
+
+      const canvas = document.getElementById('mort-donut-chart');
+      if (canvas && typeof Chart !== 'undefined') {
+        if (APP_STATE.activeChartInstance) {
+          APP_STATE.activeChartInstance.destroy();
+        }
+        APP_STATE.activeChartInstance = new Chart(canvas, {
+          type: 'doughnut',
+          data: {
+            labels: ['Principal & Interest', 'Property Taxes', 'Home Insurance'],
+            datasets: [{
+              data: [
+                Number(monthlyPI.toFixed(2)),
+                Number(monthlyTax.toFixed(2)),
+                Number(monthlyIns.toFixed(2))
+              ],
+              backgroundColor: ['#003366', '#006622', '#d97706'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { boxWidth: 12, font: { size: 11 } }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function exportAmortizationCSV() {
+      const rows = APP_STATE.lastAmortizationRows || [];
+      if (!rows.length) return;
+      const headers = ['Month,Payment_PI,Principal,Interest,Taxes_Insurance,Ending_Balance'];
+      const lines = rows.map(r =>
+        `${r.month},${r.payment.toFixed(2)},${r.principal.toFixed(2)},${r.interest.toFixed(2)},${r.escrow.toFixed(2)},${r.balance.toFixed(2)}`
+      );
+      const csvString = headers.concat(lines).join('\n');
+      try {
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `calculator-pro-amortization-${APP_STATE.currency.toLowerCase()}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (err) {
+        // Fallback for strict sandboxed iframes (e.g. Google Sites)
+        try {
+          navigator.clipboard.writeText(csvString);
+        } catch (clipErr) {}
+      }
+    }
+
+    function calcLoan() {
+      const L = Math.max(0, parseFloat(document.getElementById('loan-balance')?.value) || 0);
+      const annualRate = Math.max(0, parseFloat(document.getElementById('loan-rate')?.value) || 0);
+      const n = Math.max(1, parseInt(document.getElementById('loan-months')?.value || '60', 10));
+      const extra = Math.max(0, parseFloat(document.getElementById('loan-extra')?.value) || 0);
+
+      const r = annualRate / 100 / 12;
+      let basePmt = 0;
+      if (r === 0) {
+        basePmt = L / n;
+      } else {
+        const f = Math.pow(1 + r, n);
+        basePmt = L * ((r * f) / (f - 1));
+      }
+
+      const baselineTotalInterest = Math.max(0, basePmt * n - L);
+
+      let bal = L;
+      let actualMonths = 0;
+      let actualInterest = 0;
+      while (bal > 0.005 && actualMonths < n * 2) {
+        actualMonths++;
+        const intM = bal * r;
+        actualInterest += intM;
+        let prinM = basePmt + extra - intM;
+        if (prinM <= 0) {
+          actualMonths = n;
+          break;
+        }
+        if (prinM > bal) prinM = bal;
+        bal -= prinM;
+      }
+
+      const interestSaved = Math.max(0, baselineTotalInterest - actualInterest);
+      const monthsSaved = Math.max(0, n - actualMonths);
+
+      const payoffDate = new Date(2026, 10, 5);
+      payoffDate.setMonth(payoffDate.getMonth() + actualMonths);
+      const payoffStr = payoffDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+      document.getElementById('loan-monthly-out').textContent = fmtMoney(basePmt + extra);
+      document.getElementById('loan-base-pmt').textContent = fmtMoney(basePmt);
+      document.getElementById('loan-tot-int').textContent = fmtMoney(actualInterest);
+      document.getElementById('loan-int-saved').textContent = fmtMoney(interestSaved);
+      document.getElementById('loan-payoff-date').textContent = payoffStr;
+      document.getElementById('loan-payoff-badge').textContent = 'Payoff: ' + payoffStr;
+      document.getElementById('loan-term-compare').textContent = `${n} mos → ${actualMonths} mos (${monthsSaved} mos saved)`;
+      document.getElementById('loan-base-int').textContent = fmtMoney(baselineTotalInterest);
+      document.getElementById('loan-total-paid').textContent = fmtMoney(L + actualInterest);
+    }
+
+    function calcCompound() {
+      const P = Math.max(0, parseFloat(document.getElementById('comp-initial')?.value) || 0);
+      const monthlyAdd = Math.max(0, parseFloat(document.getElementById('comp-monthly')?.value) || 0);
+      const ratePct = Math.max(0, parseFloat(document.getElementById('comp-rate')?.value) || 0);
+      const years = Math.max(1, parseInt(document.getElementById('comp-years')?.value || '20', 10));
+      const m = parseInt(document.getElementById('comp-freq')?.value || '12', 10);
+
+      const r = ratePct / 100;
+      const labels = ['Year 0'];
+      const balanceSeries = [P];
+      const principalSeries = [P];
+
+      let currentBalance = P;
+      let totalPrincipal = P;
+
+      for (let y = 1; y <= years; y++) {
+        const periodicAdd = (monthlyAdd * 12) / m;
+        for (let p = 0; p < m; p++) {
+          currentBalance = currentBalance * (1 + r / m) + periodicAdd;
+        }
+        totalPrincipal += monthlyAdd * 12;
+        labels.push('Yr ' + y);
+        balanceSeries.push(Number(currentBalance.toFixed(2)));
+        principalSeries.push(Number(totalPrincipal.toFixed(2)));
+      }
+
+      const totalInterest = Math.max(0, currentBalance - totalPrincipal);
+
+      document.getElementById('comp-fv-out').textContent = fmtMoney(currentBalance);
+      document.getElementById('comp-fv-card').textContent = fmtMoney(currentBalance);
+      document.getElementById('comp-prin-card').textContent = fmtMoney(totalPrincipal);
+      document.getElementById('comp-int-card').textContent = fmtMoney(totalInterest);
+
+      const canvas = document.getElementById('comp-line-chart');
+      if (canvas && typeof Chart !== 'undefined') {
+        if (APP_STATE.activeChartInstance) {
+          APP_STATE.activeChartInstance.destroy();
+        }
+        APP_STATE.activeChartInstance = new Chart(canvas, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Total Future Balance',
+                data: balanceSeries,
+                borderColor: '#006622',
+                backgroundColor: 'rgba(0, 102, 34, 0.12)',
+                fill: true,
+                tension: 0.25,
+                pointRadius: 2
+              },
+              {
+                label: 'Total Principal Invested',
+                data: principalSeries,
+                borderColor: '#003366',
+                backgroundColor: 'rgba(0, 51, 102, 0.08)',
+                fill: true,
+                tension: 0.1,
+                pointRadius: 2
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+            },
+            scales: {
+              y: {
+                ticks: {
+                  font: { size: 10 },
+                  callback: function(val) { return getCurrencySymbol() + Number(val).toLocaleString(); }
+                }
+              },
+              x: { ticks: { font: { size: 10 }, maxTicksLimit: 10 } }
+            }
+          }
+        });
+      }
+    }
+
+    function calcAutoLoan() {
+      const price = Math.max(0, parseFloat(document.getElementById('auto-price')?.value) || 0);
+      const down = Math.max(0, parseFloat(document.getElementById('auto-down')?.value) || 0);
+      const trade = Math.max(0, parseFloat(document.getElementById('auto-trade')?.value) || 0);
+      const rate = Math.max(0, parseFloat(document.getElementById('auto-rate')?.value) || 0);
+      const term = Math.max(1, parseInt(document.getElementById('auto-term')?.value || '60', 10));
+      const taxPct = Math.max(0, parseFloat(document.getElementById('auto-tax')?.value) || 0);
+
+      const taxableAmt = Math.max(0, price - trade);
+      const salesTaxAmt = taxableAmt * (taxPct / 100);
+      const netFinanced = Math.max(0, price + salesTaxAmt - down - trade);
+
+      const r = rate / 100 / 12;
+      let monthly = 0;
+      if (r === 0) {
+        monthly = netFinanced / term;
+      } else {
+        const f = Math.pow(1 + r, term);
+        monthly = netFinanced * ((r * f) / (f - 1));
+      }
+
+      const totalLoanCost = monthly * term;
+      const totalInterest = Math.max(0, totalLoanCost - netFinanced);
+      const allInCost = totalLoanCost + down + trade;
+
+      document.getElementById('auto-monthly-out').textContent = fmtMoney(monthly);
+      document.getElementById('auto-loan-amt').textContent = fmtMoney(netFinanced);
+      document.getElementById('auto-tax-amt').textContent = fmtMoney(salesTaxAmt);
+      document.getElementById('auto-total-loan-cost').textContent = fmtMoney(totalLoanCost);
+      document.getElementById('auto-tot-int').textContent = fmtMoney(totalInterest);
+      document.getElementById('auto-taxable-amt').textContent = fmtMoney(taxableAmt);
+      document.getElementById('auto-allin-cost').textContent = fmtMoney(allInCost);
+    }
+
+    function setBmiUnit(unit) {
+      APP_STATE.bmiUnit = unit;
+      const mBtn = document.getElementById('bmi-tab-metric');
+      const iBtn = document.getElementById('bmi-tab-imperial');
+      const mFields = document.getElementById('bmi-metric-fields');
+      const iFields = document.getElementById('bmi-imperial-fields');
+
+      if (unit === 'metric') {
+        mBtn.className = 'flex-1 py-1.5 text-xs font-bold bg-[#003366] text-white';
+        iBtn.className = 'flex-1 py-1.5 text-xs font-bold bg-white text-[#003366]';
+        mFields.classList.remove('hidden');
+        iFields.classList.add('hidden');
+      } else {
+        iBtn.className = 'flex-1 py-1.5 text-xs font-bold bg-[#003366] text-white';
+        mBtn.className = 'flex-1 py-1.5 text-xs font-bold bg-white text-[#003366]';
+        iFields.classList.remove('hidden');
+        mFields.classList.add('hidden');
+      }
+      calcBMI();
+    }
+
+    function calcBMI() {
+      let heightM = 1.75;
+      let weightKg = 70;
+
+      if (APP_STATE.bmiUnit === 'metric') {
+        const cm = Math.max(50, parseFloat(document.getElementById('bmi-cm')?.value) || 175);
+        weightKg = Math.max(10, parseFloat(document.getElementById('bmi-kg')?.value) || 70);
+        heightM = cm / 100;
+      } else {
+        const ft = Math.max(1, parseFloat(document.getElementById('bmi-ft')?.value) || 5);
+        const inches = Math.max(0, parseFloat(document.getElementById('bmi-in')?.value) || 9);
+        const lbs = Math.max(20, parseFloat(document.getElementById('bmi-lbs')?.value) || 154);
+        const totalInches = ft * 12 + inches;
+        heightM = totalInches * 0.0254;
+        weightKg = lbs * 0.45359237;
+      }
+
+      const bmi = weightKg / (heightM * heightM);
+      const prime = bmi / 25.0;
+      const minHealthyKg = 18.5 * heightM * heightM;
+      const maxHealthyKg = 24.9 * heightM * heightM;
+
+      let category = 'Normal';
+      let badgeClass = 'px-2.5 py-0.5 rounded text-xs font-extrabold bg-emerald-100 text-emerald-900';
+      if (bmi < 18.5) {
+        category = 'Underweight';
+        badgeClass = 'px-2.5 py-0.5 rounded text-xs font-extrabold bg-sky-100 text-sky-900';
+      } else if (bmi < 25) {
+        category = 'Normal';
+        badgeClass = 'px-2.5 py-0.5 rounded text-xs font-extrabold bg-emerald-100 text-emerald-900';
+      } else if (bmi < 30) {
+        category = 'Overweight';
+        badgeClass = 'px-2.5 py-0.5 rounded text-xs font-extrabold bg-amber-100 text-amber-900';
+      } else {
+        category = 'Obese';
+        badgeClass = 'px-2.5 py-0.5 rounded text-xs font-extrabold bg-rose-100 text-rose-900';
+      }
+
+      const rangeText = APP_STATE.bmiUnit === 'metric'
+        ? `${minHealthyKg.toFixed(1)} - ${maxHealthyKg.toFixed(1)} kg`
+        : `${(minHealthyKg * 2.20462).toFixed(1)} - ${(maxHealthyKg * 2.20462).toFixed(1)} lbs`;
+
+      document.getElementById('bmi-score-out').textContent = `${bmi.toFixed(1)} kg/m²`;
+      const badgeEl = document.getElementById('bmi-who-badge');
+      badgeEl.textContent = category;
+      badgeEl.className = badgeClass;
+      document.getElementById('bmi-cat-card').textContent = category;
+      document.getElementById('bmi-healthy-range').textContent = rangeText;
+      document.getElementById('bmi-prime-out').textContent = prime.toFixed(2);
+      document.getElementById('bmi-guidance-note').textContent =
+        `With a measured BMI of ${bmi.toFixed(1)} kg/m² (${category}), the WHO healthy weight window for your stature is ${rangeText}.`;
+    }
+
+    function calcCalorie() {
+      const gender = document.getElementById('cal-gender')?.value || 'male';
+      const age = Math.max(10, parseFloat(document.getElementById('cal-age')?.value) || 30);
+      const cm = Math.max(100, parseFloat(document.getElementById('cal-cm')?.value) || 175);
+      const kg = Math.max(25, parseFloat(document.getElementById('cal-kg')?.value) || 72);
+      const factor = parseFloat(document.getElementById('cal-activity')?.value || '1.55');
+
+      const s = gender === 'male' ? 5 : -161;
+      const bmr = Math.round(10 * kg + 6.25 * cm - 5 * age + s);
+      const tdee = Math.round(bmr * factor);
+      const fatLoss = Math.max(1200, tdee - 500);
+      const muscleGain = tdee + 300;
+
+      document.getElementById('cal-tdee-out').textContent = `${tdee.toLocaleString()} kcal/day`;
+      document.getElementById('cal-bmr-out').textContent = `${bmr.toLocaleString()} kcal`;
+      document.getElementById('cal-maint-card').textContent = `${tdee.toLocaleString()} kcal`;
+      document.getElementById('cal-loss-out').textContent = `${fatLoss.toLocaleString()} kcal`;
+      document.getElementById('cal-gain-out').textContent = `${muscleGain.toLocaleString()} kcal`;
+
+      document.getElementById('cal-macro-p').textContent = `${Math.round((tdee * 0.30) / 4)}g`;
+      document.getElementById('cal-macro-c').textContent = `${Math.round((tdee * 0.40) / 4)}g`;
+      document.getElementById('cal-macro-f').textContent = `${Math.round((tdee * 0.30) / 9)}g`;
+    }
+
+    function calcPercentage() {
+      const x1 = parseFloat(document.getElementById('pct1-x')?.value) || 0;
+      const y1 = parseFloat(document.getElementById('pct1-y')?.value) || 0;
+      const r1 = (x1 / 100) * y1;
+      document.getElementById('pct1-res').textContent = fmtNumber(r1, 4);
+      document.getElementById('pct1-eq').textContent = `(${x1}% × ${y1} = ${fmtNumber(r1, 4)})`;
+
+      const x2 = parseFloat(document.getElementById('pct2-x')?.value) || 0;
+      const y2 = parseFloat(document.getElementById('pct2-y')?.value) || 0;
+      if (y2 === 0) {
+        document.getElementById('pct2-res').textContent = 'Undefined (Y=0)';
+        document.getElementById('pct2-eq').textContent = '';
+      } else {
+        const r2 = (x2 / y2) * 100;
+        document.getElementById('pct2-res').textContent = `${fmtNumber(r2, 4)}%`;
+        document.getElementById('pct2-eq').textContent = `(${x2} / ${y2} × 100 = ${fmtNumber(r2, 2)}%)`;
+      }
+
+      const x3 = parseFloat(document.getElementById('pct3-x')?.value) || 0;
+      const y3 = parseFloat(document.getElementById('pct3-y')?.value) || 0;
+      if (x3 === 0) {
+        document.getElementById('pct3-res').textContent = 'Undefined (X=0)';
+        document.getElementById('pct3-eq').textContent = '';
+      } else {
+        const diff = y3 - x3;
+        const pctChange = (diff / Math.abs(x3)) * 100;
+        const dir = pctChange > 0 ? 'Increase' : pctChange < 0 ? 'Decrease' : 'No Change';
+        const sign = pctChange > 0 ? '+' : '';
+        document.getElementById('pct3-res').textContent = `${sign}${fmtNumber(pctChange, 2)}% ${dir}`;
+        document.getElementById('pct3-eq').textContent = `((${y3} - ${x3}) / |${x3}| = ${sign}${fmtNumber(pctChange, 2)}%)`;
+      }
+    }
+
+    function calcAge() {
+      const dobStr = document.getElementById('age-dob')?.value || '1995-05-15';
+      const targetStr = document.getElementById('age-target')?.value || '2026-11-05';
+
+      const [by, bm, bd] = dobStr.split('-').map(Number);
+      const [ty, tm, td] = targetStr.split('-').map(Number);
+
+      const birthUTC = Date.UTC(by, bm - 1, bd);
+      const targetUTC = Date.UTC(ty, tm - 1, td);
+
+      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const birthDateLocal = new Date(by, bm - 1, bd);
+      const dowBorn = daysOfWeek[birthDateLocal.getDay()];
+
+      if (targetUTC < birthUTC) {
+        document.getElementById('age-exact-out').textContent = 'Target Date precedes Date of Birth';
+        return;
+      }
+
+      let years = ty - by;
+      let months = tm - bm;
+      let days = td - bd;
+
+      if (days < 0) {
+        months -= 1;
+        const prevMonthDays = new Date(ty, tm - 1, 0).getDate();
+        days += prevMonthDays;
+      }
+      if (months < 0) {
+        years -= 1;
+        months += 12;
+      }
+
+      const totalDaysLived = Math.floor((targetUTC - birthUTC) / 86400000);
+      const totalMonths = years * 12 + months;
+      const totalWeeks = Math.floor(totalDaysLived / 7);
+      const remDays = totalDaysLived % 7;
+
+      let nextBdayYear = ty;
+      if (tm > bm || (tm === bm && td >= bd)) {
+        nextBdayYear = ty + 1;
+      }
+      const nextBdayUTC = Date.UTC(nextBdayYear, bm - 1, bd);
+      const daysToNextBday = Math.round((nextBdayUTC - targetUTC) / 86400000);
+
+      document.getElementById('age-exact-out').textContent = `${years} Years, ${months} Months, ${days} Days`;
+      document.getElementById('age-days-lived').textContent = `${totalDaysLived.toLocaleString()} Days`;
+      document.getElementById('age-dow-born').textContent = dowBorn;
+      document.getElementById('age-next-bday').textContent = `${daysToNextBday} Days`;
+      document.getElementById('age-total-months').textContent = `${totalMonths.toLocaleString()} Months, ${days} Days`;
+      document.getElementById('age-total-weeks').textContent = `${totalWeeks.toLocaleString()} Weeks, ${remDays} Days`;
+      document.getElementById('age-total-hours').textContent = `${(totalDaysLived * 24).toLocaleString()} Hours`;
+    }
+
+    function calcBodyFat() {
+      const gender = document.getElementById('bf-gender')?.value || 'male';
+      const weight = parseFloat(document.getElementById('bf-weight')?.value) || 78;
+      const height = parseFloat(document.getElementById('bf-height')?.value) || 178;
+      const neck = parseFloat(document.getElementById('bf-neck')?.value) || 38;
+      const waist = parseFloat(document.getElementById('bf-waist')?.value) || 85;
+      const hip = parseFloat(document.getElementById('bf-hip')?.value) || 96;
+
+      let bf = 18;
+      if (gender === 'male') {
+        const diff = Math.max(1, waist - neck);
+        bf = 495 / (1.0324 - 0.19077 * Math.log10(diff) + 0.15456 * Math.log10(height)) - 450;
+      } else {
+        const sum = Math.max(1, waist + hip - neck);
+        bf = 495 / (1.29579 - 0.35004 * Math.log10(sum) + 0.22100 * Math.log10(height)) - 450;
+      }
+      bf = Math.min(60, Math.max(3, bf));
+      const fatMass = weight * (bf / 100);
+      const leanMass = weight - fatMass;
+
+      document.getElementById('bf-pct-out').textContent = `${bf.toFixed(1)}%`;
+      document.getElementById('bf-card-pct').textContent = `${bf.toFixed(1)}%`;
+      document.getElementById('bf-card-fat').textContent = `${fatMass.toFixed(1)} kg`;
+      document.getElementById('bf-card-lean').textContent = `${leanMass.toFixed(1)} kg`;
+      document.getElementById('bf-cat-out').textContent = bf < 14 ? 'Athletic' : bf < 24 ? 'Fitness / Normal' : 'Elevated';
+    }
+
+    function calcBMROnly() {
+      const gender = document.getElementById('bmr-gender')?.value || 'male';
+      const age = parseFloat(document.getElementById('bmr-age')?.value) || 28;
+      const cm = parseFloat(document.getElementById('bmr-cm')?.value) || 175;
+      const kg = parseFloat(document.getElementById('bmr-kg')?.value) || 70;
+      const bmr = Math.round(10 * kg + 6.25 * cm - 5 * age + (gender === 'male' ? 5 : -161));
+      document.getElementById('bmr-main-out').textContent = `${bmr.toLocaleString()} kcal/day`;
+      document.getElementById('bmr-table-out').innerHTML = `
+        <div class="flex justify-between"><span>Sedentary (1.2×):</span><strong>${Math.round(bmr*1.2).toLocaleString()} kcal/day</strong></div>
+        <div class="flex justify-between"><span>Light Exercise (1.375×):</span><strong>${Math.round(bmr*1.375).toLocaleString()} kcal/day</strong></div>
+        <div class="flex justify-between"><span>Moderate Exercise (1.55×):</span><strong>${Math.round(bmr*1.55).toLocaleString()} kcal/day</strong></div>
+        <div class="flex justify-between"><span>Very Active (1.725×):</span><strong>${Math.round(bmr*1.725).toLocaleString()} kcal/day</strong></div>
+      `;
+    }
+
+    function calcIdealWeight() {
+      const gender = document.getElementById('iw-gender')?.value || 'male';
+      const cm = parseFloat(document.getElementById('iw-cm')?.value) || 175;
+      const over60 = Math.max(0, cm / 2.54 - 60);
+      const devine = (gender === 'male' ? 50.0 : 45.5) + 2.3 * over60;
+      const robinson = (gender === 'male' ? 52.0 : 49.0) + (gender === 'male' ? 1.9 : 1.7) * over60;
+      const miller = (gender === 'male' ? 56.2 : 53.1) + (gender === 'male' ? 1.41 : 1.36) * over60;
+      document.getElementById('iw-main-out').textContent = `${devine.toFixed(1)} kg (${(devine*2.20462).toFixed(1)} lbs)`;
+      document.getElementById('iw-formulas-out').innerHTML = `
+        <div class="flex justify-between"><span>Devine Formula (1974):</span><strong>${devine.toFixed(1)} kg</strong></div>
+        <div class="flex justify-between"><span>Robinson Formula (1983):</span><strong>${robinson.toFixed(1)} kg</strong></div>
+        <div class="flex justify-between"><span>Miller Formula (1983):</span><strong>${miller.toFixed(1)} kg</strong></div>
+      `;
+    }
+
+    function gcd(a, b) {
+      a = Math.abs(a); b = Math.abs(b);
+      while (b) { const t = b; b = a % b; a = t; }
+      return a || 1;
+    }
+
+    function calcFraction() {
+      const n1 = parseInt(document.getElementById('frac-n1')?.value || '0', 10);
+      const d1 = parseInt(document.getElementById('frac-d1')?.value || '1', 10);
+      const n2 = parseInt(document.getElementById('frac-n2')?.value || '0', 10);
+      const d2 = parseInt(document.getElementById('frac-d2')?.value || '1', 10);
+      const op = document.getElementById('frac-op')?.value || '+';
+
+      if (d1 === 0 || d2 === 0 || (op === '/' && n2 === 0)) {
+        document.getElementById('frac-res-main').textContent = 'Undefined (Div by 0)';
+        document.getElementById('frac-res-sub').textContent = '';
+        return;
+      }
+      let num = 0, den = d1 * d2;
+      if (op === '+') num = n1 * d2 + n2 * d1;
+      else if (op === '-') num = n1 * d2 - n2 * d1;
+      else if (op === '*') num = n1 * n2;
+      else if (op === '/') { num = n1 * d2; den = d1 * n2; }
+
+      if (den < 0) { num = -num; den = -den; }
+      const g = gcd(num, den);
+      const sNum = num / g, sDen = den / g;
+      const dec = sNum / sDen;
+      document.getElementById('frac-res-main').textContent = `${sNum} / ${sDen}`;
+      document.getElementById('frac-res-sub').textContent = `Decimal: ${dec.toFixed(4)}`;
+    }
+
+    function calcRandom() {
+      const min = parseInt(document.getElementById('rng-min')?.value || '1', 10);
+      const max = parseInt(document.getElementById('rng-max')?.value || '100', 10);
+      const count = Math.min(50, Math.max(1, parseInt(document.getElementById('rng-count')?.value || '5', 10)));
+      const lo = Math.min(min, max), hi = Math.max(min, max);
+      const nums = [];
+      for (let i = 0; i < count; i++) {
+        nums.push(Math.floor(Math.random() * (hi - lo + 1)) + lo);
+      }
+      document.getElementById('rng-output-chips').innerHTML = nums.map(n =>
+        `<span class="px-3 py-1.5 bg-[#003366] text-white font-mono font-bold rounded text-sm">${n}</span>`
+      ).join('');
+      const sum = nums.reduce((a, b) => a + b, 0);
+      document.getElementById('rng-stats-line').textContent =
+        `Count: ${nums.length} | Sum: ${sum} | Mean: ${(sum / nums.length).toFixed(2)} | Min: ${Math.min(...nums)} | Max: ${Math.max(...nums)}`;
+    }
+
+    function calcDateDiff() {
+      const s = document.getElementById('date-start')?.value || '2026-01-01';
+      const e = document.getElementById('date-end')?.value || '2026-11-05';
+      const d1 = new Date(s + 'T00:00:00Z');
+      const d2 = new Date(e + 'T00:00:00Z');
+      const totalDays = Math.round(Math.abs(d2 - d1) / 86400000);
+      const weeks = Math.floor(totalDays / 7);
+      const rem = totalDays % 7;
+      document.getElementById('date-diff-main').textContent = `${totalDays.toLocaleString()} Calendar Days`;
+      document.getElementById('date-diff-details').innerHTML = `
+        <div>Weeks + Days: <strong>${weeks} weeks, ${rem} days</strong></div>
+        <div>Total Hours: <strong>${(totalDays * 24).toLocaleString()} hours</strong></div>
+      `;
+    }
+
+    function calcTime() {
+      const s1 = ((parseInt(document.getElementById('t1-d')?.value||'0',10)*86400) +
+                  (parseInt(document.getElementById('t1-h')?.value||'0',10)*3600) +
+                  (parseInt(document.getElementById('t1-m')?.value||'0',10)*60) +
+                  parseInt(document.getElementById('t1-s')?.value||'0',10));
+      const s2 = ((parseInt(document.getElementById('t2-d')?.value||'0',10)*86400) +
+                  (parseInt(document.getElementById('t2-h')?.value||'0',10)*3600) +
+                  (parseInt(document.getElementById('t2-m')?.value||'0',10)*60) +
+                  parseInt(document.getElementById('t2-s')?.value||'0',10));
+      const op = document.getElementById('time-op')?.value || '+';
+      const diff = Math.abs(op === '+' ? s1 + s2 : s1 - s2);
+      const d = Math.floor(diff / 86400);
+      const h = Math.floor((diff % 86400) / 3600);
+      const m = Math.floor((diff % 3600) / 60);
+      const s = diff % 60;
+      document.getElementById('time-result-banner').textContent =
+        `Result: ${d} Days, ${h} Hours, ${m} Minutes, ${s} Seconds (${(diff/3600).toFixed(2)} Total Hours)`;
+    }
+
+    function calcGPA() {
+      let totCr = 0, totPts = 0;
+      for (let i = 0; i < 4; i++) {
+        const cr = parseFloat(document.getElementById('gpa-cr-' + i)?.value) || 0;
+        const gr = parseFloat(document.getElementById('gpa-gr-' + i)?.value) || 0;
+        totCr += cr;
+        totPts += cr * gr;
+      }
+      const gpa = totCr > 0 ? totPts / totCr : 0;
+      document.getElementById('gpa-out-score').textContent = gpa.toFixed(2);
+      document.getElementById('gpa-summary-box').innerHTML = `
+        <div>Total Credits Attempted: <strong>${totCr}</strong></div>
+        <div>Total Quality Points: <strong>${totPts.toFixed(2)}</strong></div>
+      `;
+    }
+
+    window.addEventListener('hashchange', () => {
+      const target = (window.location.hash || '#home').replace('#', '');
+      if (target && target !== APP_STATE.currentView) {
+        navigateTo(target);
+      }
+    });
+
+    function flashSciButtonByText(labelText) {
+      const buttons = document.querySelectorAll('.sci-grid .sci-key');
+      buttons.forEach(btn => {
+        if (btn.textContent.trim() === labelText) {
+          btn.classList.add('kbd-pressed');
+          setTimeout(() => btn.classList.remove('kbd-pressed'), 140);
+        }
+      });
+      const kbdBadge = document.getElementById('sci-kbd-badge');
+      if (kbdBadge) {
+        kbdBadge.textContent = '⌨ Key: ' + labelText;
+      }
+    }
+
+    function handleGlobalKeydown(e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      const active = document.activeElement;
+      const tag = active ? active.tagName.toLowerCase() : '';
+      const isTextInput = (tag === 'input' || tag === 'textarea' || tag === 'select' || (active && active.isContentEditable));
+
+      if (isTextInput) {
+        if (active.id === 'directory-search-input') {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            triggerDirectorySearch();
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            clearDirectorySearch();
+            active.blur();
+          }
+          return;
+        }
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          runActiveCalculator();
+        } else if (e.key === 'Escape') {
+          active.blur();
+        }
+        return;
+      }
+
+      const key = e.key;
+
+      if (/^[0-9]$/.test(key)) {
+        e.preventDefault();
+        sciDigit(key);
+        flashSciButtonByText(key);
+        return;
+      }
+
+      if (key === '.' || key === ',') {
+        e.preventDefault();
+        sciDecimal();
+        flashSciButtonByText('.');
+        return;
+      }
+
+      if (key === '+') {
+        e.preventDefault();
+        sciOperator('+');
+        flashSciButtonByText('+');
+        return;
+      }
+      if (key === '-') {
+        e.preventDefault();
+        sciOperator('-');
+        flashSciButtonByText('−');
+        return;
+      }
+      if (key === '*' || key === 'x' || key === 'X') {
+        e.preventDefault();
+        sciOperator('*');
+        flashSciButtonByText('×');
+        return;
+      }
+      if (key === '/') {
+        e.preventDefault();
+        sciOperator('/');
+        flashSciButtonByText('/');
+        return;
+      }
+      if (key === '^') {
+        e.preventDefault();
+        sciOperator('^');
+        flashSciButtonByText('xʸ');
+        return;
+      }
+
+      if (key === 'Enter' || key === '=') {
+        e.preventDefault();
+        sciEquals();
+        flashSciButtonByText('=');
+        return;
+      }
+
+      if (key === 'Backspace') {
+        e.preventDefault();
+        sciAction('back');
+        flashSciButtonByText('Back');
+        return;
+      }
+
+      if (key === 'Escape' || key === 'Delete' || key === 'c' || key === 'C') {
+        e.preventDefault();
+        sciClear();
+        flashSciButtonByText('AC');
+        return;
+      }
+
+      if (key === '(' || key === ')') {
+        e.preventDefault();
+        sciParen(key);
+        flashSciButtonByText(key);
+        return;
+      }
+
+      if (key === '%') {
+        e.preventDefault();
+        sciAction('percent');
+        flashSciButtonByText('%');
+        return;
+      }
+      if (key === '!') {
+        e.preventDefault();
+        sciAction('fact');
+        flashSciButtonByText('n!');
+        return;
+      }
+
+      if (key === 'p' || key === 'P') {
+        e.preventDefault();
+        sciConstant('pi');
+        flashSciButtonByText('π');
+        return;
+      }
+      if (key === 'e') {
+        e.preventDefault();
+        sciConstant('e');
+        flashSciButtonByText('e');
+        return;
+      }
+      if (key === 'E') {
+        e.preventDefault();
+        sciAction('EXP');
+        flashSciButtonByText('EXP');
+        return;
+      }
+      if (key === 's' || key === 'S') {
+        e.preventDefault();
+        sciAction(key === 'S' ? 'asin' : 'sin');
+        flashSciButtonByText(key === 'S' ? 'sin⁻¹' : 'sin');
+        return;
+      }
+      if (key === 'o' || key === 'O') {
+        e.preventDefault();
+        sciAction(key === 'O' ? 'acos' : 'cos');
+        flashSciButtonByText(key === 'O' ? 'cos⁻¹' : 'cos');
+        return;
+      }
+      if (key === 't' || key === 'T') {
+        e.preventDefault();
+        sciAction(key === 'T' ? 'atan' : 'tan');
+        flashSciButtonByText(key === 'T' ? 'tan⁻¹' : 'tan');
+        return;
+      }
+      if (key === 'q') {
+        e.preventDefault();
+        sciAction('square');
+        flashSciButtonByText('x²');
+        return;
+      }
+      if (key === 'r' || key === 'R') {
+        e.preventDefault();
+        sciAction(key === 'R' ? 'rnd' : 'sqrt');
+        flashSciButtonByText(key === 'R' ? 'RND' : '√x');
+        return;
+      }
+      if (key === 'l') {
+        e.preventDefault();
+        sciAction('ln');
+        flashSciButtonByText('ln');
+        return;
+      }
+      if (key === 'g') {
+        e.preventDefault();
+        sciAction('log');
+        flashSciButtonByText('log');
+        return;
+      }
+      if (key === 'a' || key === 'A') {
+        e.preventDefault();
+        sciAction('ans');
+        flashSciButtonByText('Ans');
+        return;
+      }
+      if (key === 'd' || key === 'D') {
+        e.preventDefault();
+        sciToggleAngleMode();
+        return;
+      }
+    }
+
+    window.addEventListener('keydown', handleGlobalKeydown);
+
+    // Expose all handlers explicitly on window for Google Sites / iframe compatibility
+    Object.assign(window, {
+      navigateTo,
+      handleCurrencyChange,
+      sciToggleAngleMode,
+      sciDigit,
+      sciDecimal,
+      sciConstant,
+      sciParen,
+      sciAction,
+      sciOperator,
+      sciEquals,
+      sciClear,
+      sciMemory,
+      handleDirectorySearch,
+      triggerDirectorySearch,
+      clearDirectorySearch,
+      toggleFaqItem,
+      syncMortDownFromPct,
+      syncMortDownFromAmt,
+      resetMortgage,
+      calcMortgage,
+      exportAmortizationCSV,
+      calcLoan,
+      calcCompound,
+      calcAutoLoan,
+      setBmiUnit,
+      calcBMI,
+      calcCalorie,
+      calcPercentage,
+      calcAge,
+      calcBodyFat,
+      calcBMROnly,
+      calcIdealWeight,
+      calcFraction,
+      calcRandom,
+      calcDateDiff,
+      calcTime,
+      calcGPA
+    });
+
+    function initCalculatorProApp() {
+      updateSciScreen();
+      document.querySelectorAll('.sci-grid .sci-key').forEach(btn => {
+        btn.addEventListener('click', () => btn.blur());
+      });
+      // Event delegation for [data-nav] buttons so navigation always works in Google Sites embeds
+      document.addEventListener('click', (evt) => {
+        const navEl = evt.target && evt.target.closest ? evt.target.closest('[data-nav]') : null;
+        if (navEl) {
+          evt.preventDefault();
+          const targetView = navEl.getAttribute('data-nav');
+          if (targetView) navigateTo(targetView);
+        }
+      });
+      document.addEventListener('mousedown', (evt) => {
+        const t = evt.target;
+        if (t && !['INPUT', 'SELECT', 'TEXTAREA'].includes(t.tagName)) {
+          try { window.focus(); } catch (e) {}
+        }
+      });
+      try {
+        const initialHash = (window.location.hash || '').replace('#', '');
+        if (initialHash && CALCULATOR_DEFINITIONS[initialHash]) {
+          navigateTo(initialHash);
+        }
+      } catch (e) {}
+    }
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', initCalculatorProApp);
+    } else {
+      initCalculatorProApp();
+    }
+  </script>
+</body>
+</html>
