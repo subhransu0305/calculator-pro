@@ -4,6 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calculator Pro (.pro) - Free Online Financial, Health, Math &amp; Date Calculators</title>
+
+  <!-- Step 1: Include Adcash library -->
+  <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+  <!-- Step 2: Adcash Autotag script -->
+  <script type="text/javascript">
+    aclib.runAutoTag({
+      zoneId: '3qojwgtrn5',
+    });
+  </script>
+
   <!-- Tailwind CSS v3.4.16 -->
   <script src="https://cdn.tailwindcss.com/3.4.16"></script>
   <!-- Chart.js v4.4.1 -->
@@ -1459,7 +1469,7 @@
         title: 'BMI & Body Composition Calculator',
         category: 'Fitness & Health Calculators',
         subtitle: 'Compute Body Mass Index (BMI), World Health Organization (WHO) weight classification, BMI Prime, and healthy target weight range.',
-        formula: `Metric:   BMI = Weight (kg) / [ Height (m) ]²\nImperial: BMI = 703 × Weight (lbs) / [ Height (in) ]²\nHealthy Weight Range = 18.5 × Height(m)²  to  24.9 × Height(m)²`,
+        formula: `Metric:    BMI = Weight (kg) / [ Height (m) ]²\nImperial: BMI = 703 × Weight (lbs) / [ Height (in) ]²\nHealthy Weight Range = 18.5 × Height(m)²  to  24.9 × Height(m)²`,
         variables: [
           '<strong>Weight</strong>: Body mass in kilograms (kg) or pounds (lbs)',
           '<strong>Height</strong>: Stature in centimeters/meters (cm/m) or feet and inches (ft/in)',
